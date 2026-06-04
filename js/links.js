@@ -45,9 +45,12 @@ function deleteCustomLink(id) {
 
 function resetToDefaultLinks() {
   showCustomConfirm("Reset Portal?", "Semua tautan kustom Anda akan terhapus dan kembali ke setelan pabrik.", () => {
-    // Meminta berkas json dari pelayan lokal, dengan fallback luring instan jika CORS memblokir request lokal (file://)
+    // Meminta berkas json dari pelayan lokal (diarahkan ke data/default-links.json)
     fetch('data/default-links.json')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("Gagal memuat data/default-links.json");
+        return res.json();
+      })
       .then(data => {
         linksData = data;
         saveLinks();
@@ -55,6 +58,7 @@ function resetToDefaultLinks() {
         showToast("Sistem berhasil di-reset!");
       })
       .catch(() => {
+        // Fallback luring jika CORS memblokir request lokal di protokol file:// atau server luring
         linksData = [...defaultSeedLinks]; 
         saveLinks();
         renderDynamicLinks();
