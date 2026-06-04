@@ -76,6 +76,19 @@
 }
 
 /* ==========================================================
+   LAYOUT FIXED FOR STICKY SIDEBARS
+   ========================================================== */
+
+/* Memaksa semua elemen dengan kelas sticky di dalam layout Grid/Flex 
+   agar tidak meregang (stretch) secara vertikal, sehingga efek sticky 
+   dapat aktif dan meluncur dengan benar saat halaman digulir.
+*/
+aside.lg\:sticky,
+.sticky {
+  align-self: start !important;
+}
+
+/* ==========================================================
    GLOBAL PREMIUM TYPOGRAPHY & SMOOTHING CONFIGURATION
    ========================================================== */
 
