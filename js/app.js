@@ -19,7 +19,7 @@ var CONFIG = {
   IDLE_LIMIT_MINUTES: 15
 };
 
-// Deklarasi Variabel State Global
+// Deklarasi Variabel State Global (Dipastikan siap sebelum modul UI memprosesnya)
 var activeCategory = 'semua';
 var linksData = [];
 var agendaData = [];
@@ -97,7 +97,10 @@ window.onload = () => {
     { id: "ag-1", text: "Koordinasi pemutakhiran data rombel kelas 7, 8, dan 9.", done: false, createdAt: Date.now() },
     { id: "ag-2", text: "Verifikasi keaktifan dan residu NIK siswa pada portal VervalPD.", done: false, createdAt: Date.now() + 1 }
   ];
+  
+  // Membaca Buku Saku (Notes) dari Penyimpanan Lokal
   notesData = secureRead(CONFIG.STORAGE_PREFIX + 'notes') || [];
+  
   authenticatorKeys = secureRead(CONFIG.STORAGE_PREFIX + 'auth-keys') || [
     { id: '2fa-seed-myasn', label: 'MyASN BKN (Contoh)', user: 'admin@bkn.go.id', key: 'JBSWY3DPEHPK3PXP' }
   ];
