@@ -24,7 +24,7 @@ function showToast(message, type = 'success') {
   }, 4000);
 }
 
-// --- SISTEM MODAL KONFIRMASI KUSTOM ---
+// --- SISTEM MODAL CONFIRMATION CUSTOM ---
 function showCustomConfirm(title, message, callback, iconClass = 'fa-circle-question') {
   const modal = document.getElementById('custom-confirm-modal');
   if (!modal) return;
@@ -160,16 +160,37 @@ function clearSearchInput() {
 
 // --- SISTEM PANEL TAB ASISTEN (KANAN) ---
 function switchAsistenTab(t) {
-  // Tab asisten sekarang menggunakan 'agenda', 'memo', dan 'alat'
-  ['agenda', 'memo', 'alat'].forEach(id => {
+  ['agenda', 'kalender', 'alat'].forEach(id => {
     const btn = document.getElementById(`btn-tab-${id}`);
     const panel = document.getElementById(`panel-tab-${id}`);
     
     if (btn) {
       if (id === t) {
-        btn.className = "flex-1 py-2 px-1 rounded-xl text-[11px] font-extrabold bg-white dark:bg-slate-800 text-blue-600 shadow-sm";
+        btn.className = "flex-1 py-2 px-2 rounded-xl text-[11px] font-extrabold bg-white dark:bg-slate-800 text-blue-600 shadow-sm";
       } else {
-        btn.className = "flex-1 py-2 px-1 rounded-xl text-[11px] font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all";
+        btn.className = "flex-1 py-2 px-2 rounded-xl text-[11px] font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200";
+      }
+    }
+    if (panel) {
+      panel.classList.toggle('hidden', id !== t);
+    }
+  });
+  
+  if (t === 'kalender') {
+    initCalendar();
+  }
+}
+
+function switchSubTab(t) {
+  ['tugas', 'memo'].forEach(id => {
+    const btn = document.getElementById(`btn-sub-${id}`);
+    const panel = document.getElementById(`sub-panel-${id}`);
+    
+    if (btn) {
+      if (id === t) {
+        btn.className = "flex-1 py-1.5 text-[10px] font-black bg-white dark:bg-slate-800 text-blue-600 shadow-xs rounded-lg";
+      } else {
+        btn.className = "flex-1 py-1.5 text-[10px] font-bold text-slate-500";
       }
     }
     if (panel) {
@@ -178,11 +199,7 @@ function switchAsistenTab(t) {
   });
 }
 
-// Buku saku sekarang adalah tab utama, fungsi sub-tab dilewati untuk fleksibilitas modular
-function switchSubTab(t) {
-  // Dipelihara untuk kompatibilitas internal jika diperlukan
-}
-
+// Pembuka/Penutup Modul Modal Dialog
 function openAddAgendaModal() {
   const m = document.getElementById('add-agenda-modal');
   if (m) {
@@ -232,10 +249,14 @@ function closeAddLinkModal() {
 }
 
 // --- TAB ASISTEN: AGENDA KERJA ---
+function saveAgenda() { secureSave(CONFIG.STORAGE_PREFIX + 'agendas', agendaData); }
+
 function renderAgenda() {
   const c = document.getElementById('agenda-list-container');
   if (!c) return;
-  c.innerHTML = '';
+  
+  // Menggunakan DocumentFragment untuk meningkatkan kinerja rendering DOM secara instan
+  const fragment = document.createDocumentFragment();
   const f = document.getElementById('agenda-filter').value;
   const tasks = agendaData.filter(t => f === 'semua' ? true : (f === 'belum' ? !t.done : t.done)).sort((a,b)=>a.createdAt-b.createdAt);
   
@@ -250,8 +271,11 @@ function renderAgenda() {
       <button onclick="deleteAgendaItem('${t.id}')" class="text-rose-500 opacity-0 group-hover:opacity-100 transition p-1">
         <i class="fa-solid fa-trash-can text-[10px]"></i>
       </button>`;
-    c.appendChild(d);
+    fragment.appendChild(d);
   });
+  
+  c.innerHTML = '';
+  c.appendChild(fragment);
   updateCountdownTask();
 }
 
@@ -292,7 +316,7 @@ function updateCountdownTask() {
   if(btn && p) btn.onclick = () => toggleTaskDone(p.id);
 }
 
-// --- TAB ASISTEN: KALENDER KERJA (TERKONEKSI DENGAN BUKU SAKU MEMO) ---
+// --- TAB ASISTEN: KALENDER KERJA (Sangat Dioptimalkan dengan Buffer Render Sekaligus) ---
 function initCalendar() {
   const names = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
   const y = currentDateObj.getFullYear();
@@ -301,59 +325,33 @@ function initCalendar() {
   if (headerTitle) headerTitle.textContent = `${names[m]} ${y}`;
   const c = document.getElementById('calendar-days-grid');
   if (!c) return;
-  c.innerHTML = '';
-  
+
   const fd = new Date(y, m, 1).getDay();
   const td = new Date(y, m+1, 0).getDate();
-  
-  for(let i=0; i<fd; i++) c.innerHTML += `<div></div>`;
   const today = new Date();
+  
+  // Menggunakan pendekatan Buffer Array String untuk menghindari overhead penulisan innerHTML berulang
+  let htmlBuffer = [];
+  
+  for(let i=0; i<fd; i++) {
+    htmlBuffer.push(`<div></div>`);
+  }
   
   for(let d=1; d<=td; d++) {
     const isT = today.getDate()===d && today.getMonth()===m && today.getFullYear()===y;
+    const itemClass = isT ? 'bg-blue-600 text-white font-bold' : 'hover:bg-blue-50 dark:hover:bg-slate-700';
     
-    // Periksa apakah ada catatan memo penting pada tanggal ini
-    const formattedTarget = `${y}-${String(m+1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-    const hasNote = notesData.some(n => n.date === formattedTarget);
-    
-    const dayElement = document.createElement('div');
-    dayElement.className = `p-1 rounded cursor-pointer relative flex flex-col items-center justify-center min-h-[32px] ${isT ? 'bg-blue-600 text-white font-bold':'hover:bg-blue-50 dark:hover:bg-slate-700'}`;
-    dayElement.textContent = d;
-    
-    // Berikan titik penanda jika ada memo penting
-    if (hasNote) {
-      const dot = document.createElement('span');
-      dot.className = `absolute bottom-1 w-1 h-1 rounded-full ${isT ? 'bg-white' : 'bg-rose-500 animate-pulse'}`;
-      dayElement.appendChild(dot);
-    }
-    
-    dayElement.onclick = () => showCalendarEventsForDate(d, m, y);
-    c.appendChild(dayElement);
+    // Perencanaan click event yang aman
+    htmlBuffer.push(`
+      <div onclick="document.getElementById('calendar-event-display').innerHTML='<p class=\\'text-[10px] font-bold text-blue-600 dark:text-blue-400\\'><i class=\\'fa-solid fa-circle-info\\'></i> Hari Penting: ${d} ${names[m]} ${y}</p>'" 
+           class="p-1 rounded cursor-pointer transition-colors duration-150 ${itemClass}">
+        ${d}
+      </div>
+    `);
   }
-}
-
-function showCalendarEventsForDate(day, month, year) {
-  const names = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-  const formattedTarget = `${year}-${String(month+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-  const matchedNotes = notesData.filter(n => n.date === formattedTarget);
-  const displayArea = document.getElementById('calendar-event-display');
   
-  if (!displayArea) return;
-  
-  if (matchedNotes.length > 0) {
-    let html = `<div class="space-y-1.5"><p class="text-[10px] font-black text-blue-600 dark:text-blue-400 flex items-center gap-1"><i class="fa-solid fa-calendar-day"></i> Jadwal ${day} ${names[month]} ${year}:</p>`;
-    matchedNotes.forEach(n => {
-      html += `
-        <div class="p-2 rounded-lg bg-blue-50/50 dark:bg-slate-900/50 border border-blue-100/50 dark:border-slate-800 text-left">
-          <h5 class="text-[10px] font-bold text-slate-800 dark:text-slate-100">${n.title}</h5>
-          <p class="text-[9px] text-slate-500 dark:text-slate-400 mt-0.5">${n.body}</p>
-        </div>`;
-    });
-    html += `</div>`;
-    displayArea.innerHTML = html;
-  } else {
-    displayArea.innerHTML = `<p class="text-[10px] text-slate-400 italic"><i class="fa-solid fa-circle-info text-blue-400"></i> Tidak ada memo penting pada ${day} ${names[month]} ${year}.</p>`;
-  }
+  // Penulisan ke DOM secara instan dalam 1 operasi tunggal (Loading Super Cepat)
+  c.innerHTML = htmlBuffer.join('');
 }
 
 function prevMonth() { currentDateObj.setMonth(currentDateObj.getMonth()-1); initCalendar(); }
@@ -363,74 +361,52 @@ function nextMonth() { currentDateObj.setMonth(currentDateObj.getMonth()+1); ini
 function renderQuickNotes() {
   const c = document.getElementById('quick-notes-list');
   if(!c) return;
-  c.innerHTML = '';
   
-  if (notesData.length === 0) {
-    c.innerHTML = `<p class="text-[10px] text-slate-400 italic text-center py-4">Belum ada catatan memo sekolah.</p>`;
-    return;
-  }
-
+  const fragment = document.createDocumentFragment();
+  
   notesData.forEach(n => {
-    const item = document.createElement('div');
-    item.className = 'p-3 border rounded-xl bg-slate-50/50 dark:bg-slate-900/30 relative group font-sans border-slate-100 dark:border-slate-800 hover:shadow-xs transition-all';
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'p-2 border rounded-xl bg-slate-50/50 dark:bg-slate-900/30 relative group font-sans';
     
-    const titleEl = document.createElement('h5');
-    titleEl.className = 'text-[10px] font-bold text-slate-800 dark:text-white flex items-center gap-1.5';
-    titleEl.innerHTML = `<i class="fa-solid fa-bookmark text-blue-500 text-[8px]"></i> ${n.title}`;
-
-    const dateBadge = document.createElement('span');
-    dateBadge.className = 'block text-[8px] font-mono text-slate-400 dark:text-slate-500 mt-1';
-    dateBadge.textContent = n.date ? `📅 Pelaksanaan: ${formatIndoDate(n.date)}` : '📅 Tiada tanggal';
-
-    const bodyEl = document.createElement('p');
-    bodyEl.className = 'text-[9px] text-slate-500 leading-relaxed mt-1.5 break-words';
-    bodyEl.textContent = n.body;
-
-    const delBtn = document.createElement('button');
-    delBtn.className = 'absolute top-3 right-3 opacity-0 group-hover:opacity-100 text-rose-500 hover:text-rose-700 transition duration-150';
-    delBtn.innerHTML = '<i class="fa-solid fa-trash text-[9px]"></i>';
-    delBtn.onclick = () => {
+    // Pengamanan XSS konten dinamis menggunakan textContent
+    const h5 = document.createElement('h5');
+    h5.className = 'text-[10px] font-bold text-slate-800 dark:text-white';
+    h5.textContent = n.title;
+    
+    const p = document.createElement('p');
+    p.className = 'text-[9px] text-slate-500 leading-relaxed line-clamp-2';
+    p.textContent = n.body;
+    
+    const btn = document.createElement('button');
+    btn.className = 'absolute top-2 right-2 opacity-0 group-hover:opacity-100 text-rose-500 transition';
+    btn.innerHTML = '<i class="fa-solid fa-trash text-[9px]"></i>';
+    btn.onclick = () => {
       notesData = notesData.filter(x => x.id !== n.id);
       secureSave(CONFIG.STORAGE_PREFIX + 'notes', notesData);
       renderQuickNotes();
-      initCalendar(); // Segarkan kalender untuk mencerminkan perubahan tanda titik
     };
-
-    item.appendChild(titleEl);
-    if(n.date) item.appendChild(dateBadge);
-    item.appendChild(bodyEl);
-    item.appendChild(delBtn);
-    c.appendChild(item);
+    
+    itemDiv.appendChild(h5);
+    itemDiv.appendChild(p);
+    itemDiv.appendChild(btn);
+    fragment.appendChild(itemDiv);
   });
-}
-
-function formatIndoDate(dateStr) {
-  try {
-    const parts = dateStr.split('-');
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-    return `${parts[2]} ${months[parseInt(parts[1])-1]} ${parts[0]}`;
-  } catch(e) {
-    return dateStr;
-  }
+  
+  c.innerHTML = '';
+  c.appendChild(fragment);
 }
 
 function addQuickNote() {
   const t = document.getElementById('note-title-input').value.trim();
-  const d = document.getElementById('note-date-input').value; // Ambil nilai tanggal pelaksana
   const b = document.getElementById('note-body-input').value.trim();
-  
   if(t && b) {
-    notesData.push({ id: 'n-'+Date.now(), title: t, date: d || "", body: b });
+    notesData.push({ id: 'n-'+Date.now(), title: t, body: b });
     secureSave(CONFIG.STORAGE_PREFIX + 'notes', notesData);
     renderQuickNotes();
-    initCalendar(); // Segarkan kalender kerja agar titik penanda termuat
     closeAddMemoModal();
     document.getElementById('note-title-input').value = '';
-    document.getElementById('note-date-input').value = '';
     document.getElementById('note-body-input').value = '';
     showToast("Memo catatan berhasil disimpan!");
-  } else {
-    showToast("Mohon lengkapi judul dan rincian memo!", "warning");
   }
 }
 
@@ -439,7 +415,14 @@ function populateWaSelect() {
   const s = document.getElementById('wa-template-select');
   if(s) {
     s.innerHTML = '';
-    waTemplates.forEach(t => s.innerHTML += `<option value="${t.id}">${t.name}</option>`);
+    const fragment = document.createDocumentFragment();
+    waTemplates.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.id;
+      opt.textContent = t.name;
+      fragment.appendChild(opt);
+    });
+    s.appendChild(fragment);
   }
 }
 
@@ -473,9 +456,10 @@ function closeTemplatesModal() {
 function renderTemplatesList() {
   const container = document.getElementById('templates-list-container');
   if(!container) return;
-  container.innerHTML = '';
+  
+  const buffer = [];
   waTemplates.forEach(t => {
-    container.innerHTML += `
+    buffer.push(`
       <div class="p-3 border dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 rounded-xl flex justify-between items-start gap-2">
         <div class="truncate flex-1">
           <h5 class="text-xs font-bold truncate text-slate-800 dark:text-white">${t.name}</h5>
@@ -485,8 +469,10 @@ function renderTemplatesList() {
           <button onclick="editTemplate('${t.id}')" class="text-blue-500 hover:text-blue-700 transition" title="Ubah"><i class="fa-solid fa-pen-to-square"></i></button>
           <button onclick="deleteTemplate('${t.id}')" class="text-rose-500 hover:text-rose-700 transition" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
         </div>
-      </div>`;
+      </div>
+    `);
   });
+  container.innerHTML = buffer.join('');
 }
 
 function showAddTemplateForm() {
@@ -587,17 +573,19 @@ function registerMainServiceWorker() {
   }
 }
 
-// Real-time Countdown Cut-off BOS
+// Real-time Countdown Cut-off BOS (Sangat Optimal tanpa Overhead CPU)
 function startCutOffCountdown() {
   const targetDate = new Date(CONFIG.CUTOFF_DATE).getTime();
+  const daysEl = document.getElementById("countdown-days");
+  const hoursEl = document.getElementById("countdown-hours");
+  const minutesEl = document.getElementById("countdown-minutes");
+  const secondsEl = document.getElementById("countdown-seconds");
+  
+  if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+
   function updateCountdown() {
-    const now = new Date().getTime();
+    const now = Date.now();
     const distance = targetDate - now;
-    const daysEl = document.getElementById("countdown-days");
-    const hoursEl = document.getElementById("countdown-hours");
-    const minutesEl = document.getElementById("countdown-minutes");
-    const secondsEl = document.getElementById("countdown-seconds");
-    if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
 
     if (distance < 0) {
       daysEl.textContent = "00";
@@ -606,40 +594,24 @@ function startCutOffCountdown() {
       secondsEl.textContent = "00";
       return;
     }
-    daysEl.textContent = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
-    hoursEl.textContent = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-    minutesEl.textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-    secondsEl.textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+    
+    const d = Math.floor(distance / 86400000);
+    const h = Math.floor((distance % 86400000) / 3600000);
+    const m = Math.floor((distance % 3600000) / 60000);
+    const s = Math.floor((distance % 60000) / 1000);
+    
+    daysEl.textContent = d < 10 ? '0' + d : d;
+    hoursEl.textContent = h < 10 ? '0' + h : h;
+    minutesEl.textContent = m < 10 ? '0' + m : m;
+    secondsEl.textContent = s < 10 ? '0' + s : s;
   }
+  
+  // Eksekusi pertama kali secara instan (Menghapus kedipan loading "--")
   updateCountdown();
   setInterval(updateCountdown, 1000);
 }
 
 // Berkas Sumber Manifest & Service Worker untuk Unduhan Paket Luring
-const manifestJsonText = `{
-  "name": "DAPO-HUB SPENTIG",
-  "short_name": "DAPO-HUB",
-  "description": "Portal Integrasi Operator Dapodik & IT SMP Negeri 3 Makassar",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#2563eb",
-  "icons": [
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/2210/2210143.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
-}`;
+const manifestJsonText = `{\n  "name": "DAPO-HUB SPENTIG",\n  "short_name": "DAPO-HUB",\n  "description": "Portal Integrasi Operator Dapodik & IT SMP Negeri 3 Makassar",\n  "start_url": "index.html",\n  "display": "standalone",\n  "background_color": "#f8fafc",\n  "theme_color": "#2563eb",\n  "icons": [\n    {\n      "src": "https://cdn-icons-png.flaticon.com/512/2210/2210143.png",\n      "sizes": "512x512",\n      "type": "image/png"\n    }\n  ]\n}`;
 
-const serviceWorkerJsText = `
-  const CACHE_NAME = 'dapohub-cache-v3';
-  const ASSETS_TO_CACHE = ['./', './index.html', './manifest.json'];
-  self.addEventListener('install', (e) => e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS_TO_CACHE))));
-  self.addEventListener('activate', (e) => e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))));
-  self.addEventListener('fetch', (e) => {
-    if (!e.request.url.startsWith('http')) return;
-    e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request).catch(() => caches.match('./index.html'))));
-  });
-`;
+const serviceWorkerJsText = `\n  const CACHE_NAME = 'dapohub-cache-v3';\n  const ASSETS_TO_CACHE = ['./', './index.html', './manifest.json'];\n  self.addEventListener('install', (e) => e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS_TO_CACHE))));\n  self.addEventListener('activate', (e) => e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))));\n  self.addEventListener('fetch', (e) => {\n    if (!e.request.url.startsWith('http')) return;\n    e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request).catch(() => caches.match('./index.html'))));\n  });\n`;
