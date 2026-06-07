@@ -118,7 +118,8 @@ function bootstrapApplication() {
   if (pinScreen) pinScreen.classList.add('hidden');
 
   linksData = secureRead(CONFIG.STORAGE_PREFIX + 'links');
-  if (!linksData) {
+  // PERBAIKAN: Tangani juga array kosong [] agar otomatis diredirect ke seeding bawaan
+  if (!linksData || linksData.length === 0) {
     fetch('data/default-links.json')
       .then(res => res.json())
       .then(data => {
