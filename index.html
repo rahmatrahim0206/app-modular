@@ -22,6 +22,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     
+    <!-- PDF Processing Libraries (Load Asynchronously for maximum speed) -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -156,13 +160,20 @@
               <button onclick="selectCategory('keuangan')" data-category="keuangan" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200"><span>Keuangan BOSP</span> <span id="badge-keuangan" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span></button>
               <button onclick="selectCategory('guru')" data-category="guru" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200"><span>Pendidik (GTK)</span> <span id="badge-guru" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span></button>
               <button onclick="selectCategory('kepegawaian')" data-category="kepegawaian" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200"><span>Kepegawaian ASN</span> <span id="badge-kepegawaian" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span></button>
+              
+              <!-- Tab Baru: Peralatan PDF -->
+              <button onclick="selectCategory('pdf_tools')" data-category="pdf_tools" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-file-pdf text-rose-500 animate-pulse"></i> Ruang Kerja PDF</span> 
+                <span id="badge-pdf_tools" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">5</span>
+              </button>
+
               <button onclick="selectCategory('2fa_auth')" data-category="2fa_auth" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200"><span class="flex items-center gap-1"><i class="fa-solid fa-shield-halved text-blue-500"></i> Kunci Keamanan</span> <span id="badge-2fa_auth" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span></button>
               <button onclick="selectCategory('ujian')" data-category="ujian" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200"><span>Ujian ANBK</span> <span id="badge-ujian" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span></button>
               <button onclick="selectCategory('daerah')" data-category="daerah" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200"><span>Portal Daerah</span> <span id="badge-daerah" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span></button>
             </nav>
           </div>
 
-          <!-- WIDGET BATAS CUT-OFF DAPODIK (Kolom Kiri di bawah kategori) -->
+          <!-- WIDGET BATAS CUT-OFF DAPODIK -->
           <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-md relative overflow-hidden">
             <div class="absolute right-0 bottom-0 opacity-5 translate-x-4 translate-y-4 text-slate-400 dark:text-slate-300">
               <i class="fa-solid fa-hourglass-half text-9xl"></i>
@@ -203,7 +214,7 @@
           </div>
         </aside>
 
-        <!-- KOLOM TENGAH: SEARCH & TAUTAN INTEGRASI -->
+        <!-- KOLOM TENGAH: SEARCH, TAUTAN INTEGRASI, & RUANG KERJA PDF -->
         <section class="lg:col-span-6 space-y-6">
           
           <!-- SEARCH BAR -->
@@ -220,14 +231,12 @@
           <!-- PANEL 2FA AUTHENTICATOR -->
           <article id="panel-2fa-main-auth" class="hidden space-y-6">
             <div class="flex flex-col gap-6">
-              
-              <!-- MENU 1: TOKEN OTP AKTIF -->
+              <!-- TOKEN OTP AKTIF -->
               <div class="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-md space-y-4">
                 <header class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-700">
                   <h3 class="font-space font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-key text-blue-500 animate-pulse"></i> Kode OTP Aktif (TOTP)
                   </h3>
-                  <!-- PROGRESS BAR SISA DETIK OTP -->
                   <div class="flex items-center gap-2 text-[10px] font-bold text-slate-400 dark:text-slate-500">
                     <i class="fa-solid fa-arrows-rotate animate-spin-slow"></i>
                     <span>Sisa Waktu: <span id="otp-timer-text" class="font-mono text-blue-600 dark:text-blue-400 font-black">30</span>d</span>
@@ -236,29 +245,21 @@
                     </div>
                   </div>
                 </header>
-
-                <!-- CONTAINER GRID TOKEN OTP -->
-                <div id="main-authenticator-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <!-- Diisi secara dinamis melalui JavaScript -->
-                </div>
-
-                <!-- CATATAN KAKI KEAMANAN -->
+                <div id="main-authenticator-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 <footer class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 font-medium gap-2">
                   <span class="flex items-center gap-1"><i class="fa-solid fa-lock text-emerald-500"></i> Seluruh data kunci keamanan dienkripsi secara lokal di peramban Anda.</span>
                   <span class="font-mono text-[9px]">TOTP RFC 6238 / Migrasi Google-Auth</span>
                 </footer>
               </div>
 
-              <!-- MENU 2: SETUP KUNCI & PEMINDAI QR -->
+              <!-- REGISTRASI & PEMINDAI QR -->
               <div class="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-md space-y-5">
                 <header class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-700">
                   <h3 class="font-space font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
                     <i class="fa-solid fa-qrcode text-emerald-500"></i> Registrasi & Pindai Kunci 2FA
                   </h3>
                 </header>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <!-- QR CODE CAMERA SCANNER WINDOW & UPLOAD FOTO QR CODE -->
                   <div class="space-y-3 bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/50 dark:border-slate-800">
                     <div class="flex flex-col gap-2">
                       <h4 class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
@@ -266,12 +267,10 @@
                       </h4>
                       <p class="text-[9px] text-slate-400 leading-tight">Mendukung format standar OTPAuth dan berkas migrasi Google Authenticator.</p>
                       <div class="grid grid-cols-2 gap-2">
-                        <!-- Tombol Scan Kamera -->
                         <button id="btn-toggle-scan" onclick="toggleQrScanner()" class="px-3 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded-xl transition flex items-center justify-center gap-1">
                           <i class="fa-solid fa-camera"></i> <span id="text-btn-scan">Pindai Kamera</span>
                         </button>
-                        <!-- Tombol Upload Berkas Foto QR -->
-                        <button onclick="triggerQrFileInput()" class="px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold rounded-xl transition flex items-center justify-center gap-1" title="Unggah tangkapan layar kode QR Anda">
+                        <button onclick="triggerQrFileInput()" class="px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold rounded-xl transition flex items-center justify-center gap-1">
                           <i class="fa-solid fa-upload"></i> Unggah Gambar
                         </button>
                       </div>
@@ -281,32 +280,138 @@
                     </div>
                   </div>
 
-                  <!-- INPUT FORM 2FA BARU -->
                   <div class="p-4 bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl border border-slate-200/40 dark:border-slate-700/50 space-y-3">
                     <h4 class="text-xs font-black uppercase text-slate-400">Tambah Kunci Secara Manual</h4>
                     <div class="space-y-3 text-xs">
                       <div class="grid grid-cols-2 gap-2">
                         <div>
                           <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Nama Layanan</label>
-                          <input type="text" id="auth-main-label" placeholder="Contoh: e-Kinerja, MyASN" class="w-full text-xs p-2.5 rounded-xl border dark:bg-slate-800 dark:text-white dark:border-slate-700 bg-white outline-none focus:ring-1 focus:ring-blue-500" />
+                          <input type="text" id="auth-main-label" placeholder="Contoh: e-Kinerja" class="w-full text-xs p-2.5 rounded-xl border dark:bg-slate-800 dark:text-white dark:border-slate-700 bg-white outline-none focus:ring-1 focus:ring-blue-500" />
                         </div>
                         <div>
                           <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Pengguna / Email</label>
-                          <input type="text" id="auth-main-user" placeholder="Nama atau email..." class="w-full text-xs p-2.5 rounded-xl border dark:bg-slate-800 dark:text-white dark:border-slate-700 bg-white outline-none focus:ring-1 focus:ring-blue-500" />
+                          <input type="text" id="auth-main-user" placeholder="Email..." class="w-full text-xs p-2.5 rounded-xl border dark:bg-slate-800 dark:text-white dark:border-slate-700 bg-white outline-none focus:ring-1 focus:ring-blue-500" />
                         </div>
                       </div>
                       <div>
                         <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Kunci Rahasia (Base32)</label>
                         <input type="text" id="auth-main-key" placeholder="Contoh: JBSWY 3DPEH PK3P XP" class="w-full text-xs p-2.5 rounded-xl border dark:bg-slate-800 dark:text-white dark:border-slate-700 bg-white font-mono outline-none focus:ring-1 focus:ring-blue-500" />
                       </div>
-                      <button onclick="save2FaKeyFromMain()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition shadow-md shadow-blue-500/10 flex items-center justify-center gap-1.5">
+                      <button onclick="save2FaKeyFromMain()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition shadow-md flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-save"></i> Simpan Kunci Keamanan
                       </button>
                     </div>
                   </div>
                 </div>
-
               </div>
+            </div>
+          </article>
+
+          <!-- INTERFACE BARU: RUANG KERJA ALAT PDF -->
+          <article id="panel-pdf-tools-wrapper" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-md space-y-6">
+              <header class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-700">
+                <h3 class="font-space font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                  <i class="fa-solid fa-file-pdf text-rose-500"></i> Ruang Kerja Dokumen PDF
+                </h3>
+                <span class="text-[9px] font-black tracking-widest bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded uppercase">offline engine</span>
+              </header>
+
+              <!-- Navigasi Tab Mini khusus Peralatan PDF -->
+              <nav class="flex overflow-x-auto no-scrollbar gap-1.5 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl" aria-label="Navigasi PDF">
+                <button onclick="switchPdfSubTab('merge')" id="btn-pdf-merge" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-black transition bg-white dark:bg-slate-800 text-blue-600 shadow-xs"><i class="fa-solid fa-object-group mr-1"></i> Gabung</button>
+                <button onclick="switchPdfSubTab('split')" id="btn-pdf-split" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"><i class="fa-solid fa-scissors mr-1"></i> Pisah</button>
+                <button onclick="switchPdfSubTab('img2pdf')" id="btn-pdf-img2pdf" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"><i class="fa-solid fa-image mr-1"></i> Gambar ➜ PDF</button>
+                <button onclick="switchPdfSubTab('text2pdf')" id="btn-pdf-text2pdf" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"><i class="fa-solid fa-file-signature mr-1"></i> Teks ➜ PDF</button>
+                <button onclick="switchPdfSubTab('pdf2word')" id="btn-pdf-pdf2word" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"><i class="fa-solid fa-file-word mr-1"></i> PDF ➜ Word</button>
+              </nav>
+
+              <!-- SUB-TAB 1: GABUNG PDF -->
+              <div id="sub-pdf-merge" class="space-y-4">
+                <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 p-6 rounded-2xl text-center cursor-pointer transition relative">
+                  <input type="file" id="pdf-merge-input" multiple accept="application/pdf" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleMergeFilesSelect(event)" />
+                  <i class="fa-solid fa-file-pdf text-3xl text-slate-300 dark:text-slate-600 mb-2"></i>
+                  <p class="text-xs font-bold text-slate-700 dark:text-slate-300">Pilih beberapa file PDF untuk digabungkan</p>
+                  <p class="text-[10px] text-slate-400 mt-1">Mendukung unggahan serentak (PDF multi-dokumen)</p>
+                </div>
+                <div id="pdf-merge-list" class="space-y-2 max-h-40 overflow-y-auto custom-scroll"></div>
+                <button onclick="processPdfMerge()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition shadow-md shadow-blue-500/10 flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-object-group"></i> Gabungkan & Unduh PDF
+                </button>
+              </div>
+
+              <!-- SUB-TAB 2: PISAH PDF -->
+              <div id="sub-pdf-split" class="hidden space-y-4">
+                <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 p-6 rounded-2xl text-center cursor-pointer transition relative">
+                  <input type="file" id="pdf-split-input" accept="application/pdf" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleSplitFileSelect(event)" />
+                  <i class="fa-solid fa-scissors text-3xl text-slate-300 dark:text-slate-600 mb-2"></i>
+                  <p id="pdf-split-filename" class="text-xs font-bold text-slate-700 dark:text-slate-300">Unggah satu file PDF yang ingin dipisahkan</p>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Halaman yang Ingin Diekstrak</label>
+                    <input type="text" id="pdf-split-pages" placeholder="Contoh: 1-3, 5" class="w-full text-xs p-2.5 rounded-xl border dark:bg-slate-900 dark:text-white dark:border-slate-700 bg-white outline-none focus:ring-1 focus:ring-blue-500 font-mono" />
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Nama File Hasil</label>
+                    <input type="text" id="pdf-split-name" placeholder="dokumen_ekstrak.pdf" class="w-full text-xs p-2.5 rounded-xl border dark:bg-slate-900 dark:text-white dark:border-slate-700 bg-white outline-none focus:ring-1 focus:ring-blue-500" />
+                  </div>
+                </div>
+                <button onclick="processPdfSplit()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold rounded-xl transition shadow-md flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-scissors"></i> Ekstrak Halaman & Unduh
+                </button>
+              </div>
+
+              <!-- SUB-TAB 3: GAMBAR KE PDF -->
+              <div id="sub-pdf-img2pdf" class="hidden space-y-4">
+                <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 p-6 rounded-2xl text-center cursor-pointer transition relative">
+                  <input type="file" id="pdf-img-input" multiple accept="image/jpeg, image/png" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleImageSelect(event)" />
+                  <i class="fa-solid fa-image text-3xl text-slate-300 dark:text-slate-600 mb-2"></i>
+                  <p class="text-xs font-bold text-slate-700 dark:text-slate-300">Pilih gambar JPG / PNG yang ingin dijadikan PDF</p>
+                </div>
+                <div id="pdf-img-preview" class="grid grid-cols-4 gap-2 max-h-36 overflow-y-auto custom-scroll"></div>
+                <button onclick="processImageToPdf()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition shadow-md flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-file-import"></i> Compile Gambar Jadi PDF
+                </button>
+              </div>
+
+              <!-- SUB-TAB 4: TEKS KE PDF -->
+              <div id="sub-pdf-text2pdf" class="hidden space-y-4">
+                <div>
+                  <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Tulis Naskah / Dokumen Teks</label>
+                  <textarea id="pdf-text-input-body" rows="6" placeholder="Ketik atau tempelkan teks penting di sini untuk dijadikan dokumen PDF..." class="w-full text-xs p-3 rounded-xl border dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none focus:ring-1 focus:ring-blue-500 leading-relaxed"></textarea>
+                </div>
+                <div>
+                  <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Nama File PDF</label>
+                  <input type="text" id="pdf-text-filename" placeholder="dokumen_teks.pdf" class="w-full text-xs p-2.5 rounded-xl border dark:bg-slate-900 dark:text-white dark:border-slate-700 bg-white outline-none focus:ring-1 focus:ring-blue-500" />
+                </div>
+                <button onclick="processTextToPdf()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold rounded-xl transition shadow-md flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-file-pdf"></i> Konversi Teks Jadi PDF
+                </button>
+              </div>
+
+              <!-- SUB-TAB 5: PDF KE WORD -->
+              <div id="sub-pdf-pdf2word" class="hidden space-y-4">
+                <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 p-6 rounded-2xl text-center cursor-pointer transition relative">
+                  <input type="file" id="pdf-to-word-input" accept="application/pdf" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handlePdfToWordSelect(event)" />
+                  <i class="fa-solid fa-file-word text-3xl text-slate-300 dark:text-slate-600 mb-2"></i>
+                  <p id="pdf-to-word-filename" class="text-xs font-bold text-slate-700 dark:text-slate-300">Pilih Berkas PDF yang ingin diekstrak ke Word (.doc)</p>
+                  <p class="text-[10px] text-slate-400 mt-1">Seluruh teks akan dibaca secara offline dan dikemas ke dokumen Word</p>
+                </div>
+                <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700">
+                  <h4 class="text-[10px] font-black uppercase text-slate-400 mb-1">Preview Ekstraksi Karakter</h4>
+                  <div id="pdf-word-preview-text" class="text-[11px] text-slate-500 line-clamp-3 leading-relaxed italic">Belum ada file yang dipilih...</div>
+                </div>
+                <button onclick="processPdfToWord()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition shadow-md flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-file-export"></i> Ekstrak Teks & Unduh Berkas Word (.doc)
+                </button>
+              </div>
+
+              <!-- Catatan Kaki Keamanan PDF -->
+              <footer class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 font-medium gap-2">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-shield-halved text-emerald-500"></i> File diproses sepenuhnya di browser Anda. Tidak ada data yang dikirim ke server luar.</span>
+                <span class="font-mono text-[9px]">PDFLib v1 / PDF.js Engine</span>
+              </footer>
             </div>
           </article>
 
@@ -590,7 +695,6 @@
           <p id="pin-screen-desc" class="text-xs text-slate-400 leading-relaxed">Masukkan 6-digit PIN Keamanan untuk mengenkripsi seluruh kredensial 2FA dan memo secara aman di komputer ini.</p>
         </div>
         <div class="space-y-4">
-          <!-- Input password menerima enter langsung submit -->
           <input type="password" id="pin-input-field" maxlength="6" pattern="[0-9]*" inputmode="numeric" placeholder="••••••" onkeydown="if(event.key === 'Enter') handlePinSubmit()" class="w-full tracking-[1em] text-center text-2xl font-bold p-3 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition" />
           <button id="btn-submit-pin" onclick="handlePinSubmit()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition duration-200 shadow-lg shadow-blue-500/20">
             <span id="pin-btn-text">Atur PIN Baru</span>
@@ -604,6 +708,8 @@
     <script src="js/storage.js"></script>
     <script src="js/otp.js"></script>
     <script src="js/links.js"></script>
+    <!-- File Baru untuk Engine PDF -->
+    <script src="js/pdf-tools.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/app.js"></script>
   </body>
