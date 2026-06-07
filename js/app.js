@@ -2,6 +2,40 @@
 // CENTRAL APPLICATION ENTRY POINT & GLOBAL STATE DECLARATIONS
 // ==========================================================
 
+// Konfigurasi Global Aplikasi
+var CONFIG = {
+  SCHOOL_NAME_LONG: "UPT SPF SMP Negeri 3 Makassar",
+  SCHOOL_NAME_SHORT: "SMP Negeri 3 Makassar",
+  SCHOOL_CODE_ABBR: "SPENTIG", 
+  NPSN: "40312436",
+  OPERATOR_NAME: "Rahmat Rahim",
+  RAPOR_URL: "https://rapor.smpn3makassar.sch.id",
+  CUTOFF_DATE: "August 31, 2026 23:59:59",
+  CUTOFF_TITLE: "Batas Akhir Pemutakhiran Dapodik 2026",
+  CUTOFF_DESC: "Batas waktu sinkronisasi data profil sekolah dan peserta didik untuk perhitungan dana BOS.",
+  CUTOFF_FOOTER_TEXT: "Target Batas: 31 Agustus 2026",
+  SECURE_PASS_KEY: "", // Akan diisi secara dinamis menggunakan Hash Master PIN Anda
+  STORAGE_PREFIX: "dapohub-",
+  IDLE_LIMIT_MINUTES: 15
+};
+
+// Deklarasi Variabel State Global (Kini menyertakan globalMasterPin untuk perbaikan bug klik PIN)
+var activeCategory = 'semua';
+var linksData = [];
+var agendaData = [];
+var notesData = [];
+var waTemplates = [];
+var authenticatorKeys = [];
+var currentDateObj = new Date();
+var qrScannerObj = null;
+var isScanning = false;
+var totpIntervalId = null;
+var toastTimeoutId = null;
+var activeConfirmCallback = null;
+var idleTimeCounter = 0;
+var sessionLocked = false;
+var globalMasterPin = ""; // PERBAIKAN BUG: Deklarasi penampung PIN agar tidak terjadi ReferenceError saat tombol diklik
+
 // Template Baku Siaran WhatsApp
 var defaultWaTemplates = [
   { id: "rapor", name: "1. Pengumpulan Nilai E-Rapor", text: `Assalamu'alaikum Wr. Wb. Yth. Bapak/Ibu Guru {nama},\n\nDengan hormat, mohon bantuannya untuk segera melakukan pengisian dan sinkronisasi Nilai Rapor Kelas Anda pada aplikasi E-Rapor ${CONFIG.SCHOOL_NAME_SHORT} sebelum batas waktu pengumpulan.\n\nAtas dedikasi, kerja sama, dan perhatian Bapak/Ibu, kami ucapkan terima kasih.\n\nHormat kami,\nOperator Dapodik & IT` },
@@ -36,35 +70,44 @@ function applyConfigToDOM() {
   }
 }
 
-// Sistem Pengaturan PIN Mandiri saat Pertama Kali booting atau Penguncian PIN
+// Sistem Pengaturan PIN Mandiri saat Pertama Kali booting atau Pengunduhan PIN
 function handlePinSubmit() {
   const pinInput = document.getElementById('pin-input-field');
+  if (!pinInput) return;
+  
   const enteredPin = pinInput.value.trim();
   if (enteredPin.length !== 6 || !/^\d+$/.test(enteredPin)) {
     showToast("PIN Master harus berupa 6-digit angka!", "error");
     return;
   }
 
-  const storedHash = localStorage.getItem(CONFIG.STORAGE_PREFIX + 'master-pin');
+  try {
+    const storedHash = localStorage.getItem(CONFIG.STORAGE_PREFIX + 'master-pin');
 
-  if (!storedHash) {
-    // Pengaturan awal PIN baru
-    const pinHash = CryptoJS.SHA256(enteredPin).toString();
-    localStorage.setItem(CONFIG.STORAGE_PREFIX + 'master-pin', pinHash);
-    globalMasterPin = enteredPin;
-    CONFIG.SECURE_PASS_KEY = "key-" + pinHash;
-    bootstrapApplication();
-  } else {
-    // Validasi PIN yang dimasukkan
-    const pinHash = CryptoJS.SHA256(enteredPin).toString();
-    if (storedHash === pinHash) {
+    if (!storedHash) {
+      // Pengaturan awal PIN baru
+      const pinHash = CryptoJS.SHA256(enteredPin).toString();
+      localStorage.setItem(CONFIG.STORAGE_PREFIX + 'master-pin', pinHash);
       globalMasterPin = enteredPin;
       CONFIG.SECURE_PASS_KEY = "key-" + pinHash;
+      showToast("Master PIN berhasil didaftarkan!", "success");
       bootstrapApplication();
     } else {
-      showToast("Master PIN Salah!", "error");
-      pinInput.value = "";
+      // Validasi PIN yang dimasukkan
+      const pinHash = CryptoJS.SHA256(enteredPin).toString();
+      if (storedHash === pinHash) {
+        globalMasterPin = enteredPin;
+        CONFIG.SECURE_PASS_KEY = "key-" + pinHash;
+        showToast("Sesi kerja berhasil dibuka!", "success");
+        bootstrapApplication();
+      } else {
+        showToast("Master PIN Salah!", "error");
+        pinInput.value = "";
+      }
     }
+  } catch (error) {
+    console.error("Gagal memproses otentikasi PIN:", error);
+    showToast("Terjadi kesalahan sistem pengamanan.", "error");
   }
 }
 
