@@ -113,7 +113,14 @@ function renderDynamicLinks() {
   });
 
   const noRes = document.getElementById('no-results-message');
-  if (noRes) totalVis === 0 ? noRes.classList.remove('hidden') : noRes.classList.add('hidden');
+  if (noRes) {
+    // Sembunyikan pesan jika berada di tab non-tautan biasa
+    if (activeCategory === '2fa_auth' || activeCategory === 'pdf_tools') {
+      noRes.classList.add('hidden');
+    } else {
+      totalVis === 0 ? noRes.classList.remove('hidden') : noRes.classList.add('hidden');
+    }
+  }
 }
 
 function selectCategory(cat) {
@@ -132,7 +139,6 @@ function selectCategory(cat) {
       p2Fa.classList.add('hidden');
       pLinks.classList.add('hidden');
       pPdf.classList.remove('hidden');
-      // Jalankan fungsi setel ulang input PDF saat tab aktif dibuka
       if (typeof resetPdfWorkspaces === 'function') resetPdfWorkspaces();
     } else {
       p2Fa.classList.add('hidden');
@@ -160,10 +166,13 @@ function filterLinksOrKeys() {
   const c = document.getElementById('clear-search');
   if (s && c) s.value.trim().length > 0 ? c.classList.remove('hidden') : c.classList.add('hidden');
   
+  const noRes = document.getElementById('no-results-message');
+
   if (activeCategory === '2fa_auth') {
+    if (noRes) noRes.classList.add('hidden'); // Sembunyikan paksa
     renderAuthenticatorKeys();
   } else if (activeCategory === 'pdf_tools') {
-    // Ruang kerja PDF tidak dipengaruhi filter tautan biasa
+    if (noRes) noRes.classList.add('hidden'); // Sembunyikan paksa
   } else {
     renderDynamicLinks();
   }
@@ -276,6 +285,7 @@ function renderAgenda() {
   updateCountdownTask();
 }
 
+// Tambah Tugas baru ke agenda
 function addAgendaItem() {
   const t = document.getElementById('agenda-input-text').value.trim();
   if(t) {
