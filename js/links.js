@@ -2,7 +2,6 @@
 // PORTAL LINKS MANAGEMENT LOGIC & OFFLINE SEED FALLBACK
 // ==========================================================
 
-// Data cadangan bawaan luring jika default-links.json tidak terjangkau (CORS/Protokol file://)
 const defaultSeedLinks = [
   { "id": "seed-local-dapo", "title": "Aplikasi Dapodik Lokal", "url": "http://localhost:5774", "desc": "Akses cepat langsung menuju sistem Aplikasi Dapodik yang terpasang di komputer ini (Port 5774).", "category": "utama", "icon": "fa-laptop", "system": true },
   { "id": "seed-1", "title": "Beranda Dapodik", "url": "https://dapo.kemendikdasmen.go.id", "desc": "Pusat rilis pembaruan installer, patch aplikasi, surat edaran resmi, dan panduan Dapodik.", "category": "utama", "icon": "fa-globe", "system": true },
