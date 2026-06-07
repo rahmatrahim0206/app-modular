@@ -2,39 +2,6 @@
 // CENTRAL APPLICATION ENTRY POINT & GLOBAL STATE DECLARATIONS
 // ==========================================================
 
-// Konfigurasi Global Aplikasi
-var CONFIG = {
-  SCHOOL_NAME_LONG: "UPT SPF SMP Negeri 3 Makassar",
-  SCHOOL_NAME_SHORT: "SMP Negeri 3 Makassar",
-  SCHOOL_CODE_ABBR: "SPENTIG", 
-  NPSN: "40312436",
-  OPERATOR_NAME: "Rahmat Rahim",
-  RAPOR_URL: "https://rapor.smpn3makassar.sch.id",
-  CUTOFF_DATE: "August 31, 2026 23:59:59",
-  CUTOFF_TITLE: "Batas Akhir Pemutakhiran Dapodik 2026",
-  CUTOFF_DESC: "Batas waktu sinkronisasi data profil sekolah dan peserta didik untuk perhitungan dana BOS.",
-  CUTOFF_FOOTER_TEXT: "Target Batas: 31 Agustus 2026",
-  SECURE_PASS_KEY: "dapohub-secure-universal-key-2026",
-  STORAGE_PREFIX: "dapohub-",
-  IDLE_LIMIT_MINUTES: 15
-};
-
-// Deklarasi Variabel State Global (Dipastikan siap sebelum modul UI memprosesnya)
-var activeCategory = 'semua';
-var linksData = [];
-var agendaData = [];
-var notesData = [];
-var waTemplates = [];
-var authenticatorKeys = [];
-var currentDateObj = new Date();
-var qrScannerObj = null;
-var isScanning = false;
-var totpIntervalId = null;
-var toastTimeoutId = null;
-var activeConfirmCallback = null;
-var idleTimeCounter = 0;
-var sessionLocked = false;
-
 // Template Baku Siaran WhatsApp
 var defaultWaTemplates = [
   { id: "rapor", name: "1. Pengumpulan Nilai E-Rapor", text: `Assalamu'alaikum Wr. Wb. Yth. Bapak/Ibu Guru {nama},\n\nDengan hormat, mohon bantuannya untuk segera melakukan pengisian dan sinkronisasi Nilai Rapor Kelas Anda pada aplikasi E-Rapor ${CONFIG.SCHOOL_NAME_SHORT} sebelum batas waktu pengumpulan.\n\nAtas dedikasi, kerja sama, dan perhatian Bapak/Ibu, kami ucapkan terima kasih.\n\nHormat kami,\nOperator Dapodik & IT` },
@@ -69,15 +36,45 @@ function applyConfigToDOM() {
   }
 }
 
-// Inisialisasi Utama Saat Halaman Dimuat
-window.onload = () => {
-  // Pemicu jam dan tanggal responsif tanpa delay pemuatan pertama
-  updateClock();
-  applyConfigToDOM();
-  
-  // Membaca Data Cadangan Terenkripsi Lokal
+// Sistem Pengaturan PIN Mandiri saat Pertama Kali booting atau Penguncian PIN
+function handlePinSubmit() {
+  const pinInput = document.getElementById('pin-input-field');
+  const enteredPin = pinInput.value.trim();
+  if (enteredPin.length !== 6 || !/^\d+$/.test(enteredPin)) {
+    showToast("PIN Master harus berupa 6-digit angka!", "error");
+    return;
+  }
+
+  const storedHash = localStorage.getItem(CONFIG.STORAGE_PREFIX + 'master-pin');
+
+  if (!storedHash) {
+    // Pengaturan awal PIN baru
+    const pinHash = CryptoJS.SHA256(enteredPin).toString();
+    localStorage.setItem(CONFIG.STORAGE_PREFIX + 'master-pin', pinHash);
+    globalMasterPin = enteredPin;
+    CONFIG.SECURE_PASS_KEY = "key-" + pinHash;
+    bootstrapApplication();
+  } else {
+    // Validasi PIN yang dimasukkan
+    const pinHash = CryptoJS.SHA256(enteredPin).toString();
+    if (storedHash === pinHash) {
+      globalMasterPin = enteredPin;
+      CONFIG.SECURE_PASS_KEY = "key-" + pinHash;
+      bootstrapApplication();
+    } else {
+      showToast("Master PIN Salah!", "error");
+      pinInput.value = "";
+    }
+  }
+}
+
+// Inisialisasi Booting Utama Aplikasi Setelah Enkripsi Kunci Aman Terbuka
+function bootstrapApplication() {
+  // Tutup Overlay PIN
+  const pinScreen = document.getElementById('master-pin-screen');
+  if (pinScreen) pinScreen.classList.add('hidden');
+
   linksData = secureRead(CONFIG.STORAGE_PREFIX + 'links');
-  
   if (!linksData) {
     fetch('data/default-links.json')
       .then(res => res.json())
@@ -92,21 +89,20 @@ window.onload = () => {
         renderDynamicLinks();
       });
   }
-  
+
   agendaData = secureRead(CONFIG.STORAGE_PREFIX + 'agendas') || [
     { id: "ag-1", text: "Koordinasi pemutakhiran data rombel kelas 7, 8, dan 9.", done: false, createdAt: Date.now() },
     { id: "ag-2", text: "Verifikasi keaktifan dan residu NIK siswa pada portal VervalPD.", done: false, createdAt: Date.now() + 1 }
   ];
-  
-  // Membaca Buku Saku (Notes) dari Penyimpanan Lokal
+
   notesData = secureRead(CONFIG.STORAGE_PREFIX + 'notes') || [];
-  
+
   authenticatorKeys = secureRead(CONFIG.STORAGE_PREFIX + 'auth-keys') || [
     { id: '2fa-seed-myasn', label: 'MyASN BKN (Contoh)', user: 'admin@bkn.go.id', key: 'JBSWY3DPEHPK3PXP' }
   ];
-  waTemplates = secureRead(CONFIG.STORAGE_PREFIX + 'wa-templates') || [...defaultWaTemplates];
   
-  // Menjalankan Rendering & Engine Latar Belakang
+  waTemplates = secureRead(CONFIG.STORAGE_PREFIX + 'wa-templates') || [...defaultWaTemplates];
+
   renderAll();
   initCalendar();
   populateWaSelect();
@@ -114,6 +110,23 @@ window.onload = () => {
   startCutOffCountdown();
   registerMainServiceWorker();
   updateOnlineStatus(navigator.onLine);
+}
+
+// Inisialisasi Utama Saat Halaman Selesai Dimuat (Pemeriksaan PIN Awal)
+window.addEventListener('DOMContentLoaded', () => {
+  updateClock();
+  applyConfigToDOM();
+
+  const storedHash = localStorage.getItem(CONFIG.STORAGE_PREFIX + 'master-pin');
+  const titleEl = document.getElementById('pin-screen-title');
+  const descEl = document.getElementById('pin-screen-desc');
+  const btnEl = document.getElementById('pin-btn-text');
+
+  if (storedHash) {
+    if (titleEl) titleEl.textContent = "Buka Portal DAPO-HUB";
+    if (descEl) descEl.textContent = "Masukkan 6-digit Master PIN Anda untuk mengakses seluruh data kredensial dan portal internal.";
+    if (btnEl) btnEl.textContent = "Buka Kunci Sesi";
+  }
 
   // Pemasangan Event Listener Modal Konfirmasi
   const cancelBtn = document.getElementById('btn-confirm-cancel');
@@ -135,4 +148,4 @@ window.onload = () => {
   }, 60000);
 
   setInterval(updateClock, 1000);
-};
+});
