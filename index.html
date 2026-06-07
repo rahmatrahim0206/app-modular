@@ -162,7 +162,7 @@
             </nav>
           </div>
 
-          <!-- WIDGET BATAS CUT-OFF DAPODIK -->
+          <!-- WIDGET BATAS CUT-OFF DAPODIK (Kolom Kiri di bawah kategori) -->
           <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-md relative overflow-hidden">
             <div class="absolute right-0 bottom-0 opacity-5 translate-x-4 translate-y-4 text-slate-400 dark:text-slate-300">
               <i class="fa-solid fa-hourglass-half text-9xl"></i>
@@ -441,6 +441,144 @@
       </div>
     </main>
 
+    <!-- KUMPULAN MODAL & INPUT TERSEMBUNYI -->
+    <div id="hidden-inputs-wrapper" class="hidden">
+      <input type="file" id="import-file-input" accept=".json" onchange="importBackupData(event)"/>
+      <input type="file" id="qr-file-input" accept="image/*" onchange="scanQrFile(event)" />
+    </div>
+
+    <!-- LOCK SCREEN OVERLAY -->
+    <div id="idle-lock-screen" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center pointer-events-none opacity-0 transition-all duration-500">
+      <div class="text-center p-8 max-w-sm rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl space-y-6 transform scale-95 transition-transform duration-500 font-sans" id="lock-card">
+        <div class="w-20 h-20 mx-auto rounded-full bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-500 animate-pulse text-3xl">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div class="space-y-2">
+          <h3 class="text-white font-space font-black text-lg">Sesi Kerja Terkunci</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">Portal dikunci sementara demi keamanan data karena sistem tidak mendeteksi aktivitas Anda selama beberapa waktu.</p>
+        </div>
+        <button onclick="unlockSession()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition duration-200 shadow-lg shadow-blue-500/20">
+          <i class="fa-solid fa-lock-open mr-1.5"></i> Pulihkan Sesi
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL CONFIRMATION CUSTOM -->
+    <div id="custom-confirm-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300">
+      <div class="bg-white dark:bg-slate-800 w-full max-w-sm mx-4 p-6 rounded-3xl border shadow-2xl relative transform scale-95 transition-all duration-300 font-sans">
+        <div class="text-center space-y-4">
+          <div class="w-14 h-14 mx-auto rounded-full bg-amber-50 dark:bg-amber-950/30 text-amber-500 flex items-center justify-center text-2xl">
+            <i id="confirm-modal-icon" class="fa-solid fa-circle-question"></i>
+          </div>
+          <div class="space-y-1">
+            <h4 id="confirm-modal-title" class="font-space font-extrabold text-slate-900 dark:text-white text-base">Konfirmasi Tindakan</h4>
+            <p id="confirm-modal-message" class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Apakah Anda yakin ingin melanjutkan tindakan ini?</p>
+          </div>
+          <div class="pt-4 flex items-center gap-2">
+            <button id="btn-confirm-cancel" class="flex-1 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition">Batal</button>
+            <button id="btn-confirm-ok" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition">Ya, Lanjutkan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL TAMBAH TAUTAN -->
+    <div id="add-link-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 font-sans">
+      <div class="bg-white dark:bg-slate-800 w-full max-w-md mx-4 p-6 rounded-3xl border shadow-2xl relative transform scale-95 transition-all duration-300">
+        <h3 class="font-space font-bold text-slate-900 dark:text-white text-base mb-4"><i class="fa-solid fa-circle-plus text-emerald-500"></i> Tambah Tautan Kustom</h3>
+        <div class="space-y-4">
+          <input type="text" id="new-link-title" placeholder="Nama Tautan" class="w-full text-sm p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500" />
+          <input type="url" id="new-link-url" placeholder="https://..." class="w-full text-sm p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500" />
+          <textarea id="new-link-desc" rows="2" placeholder="Deskripsi Singkat Layanan" class="w-full text-sm p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+          <div class="grid grid-cols-2 gap-3">
+            <select id="new-link-category" class="w-full text-sm p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none font-bold focus:ring-2 focus:ring-blue-500 cursor-pointer">
+              <option value="utama">Dapodik Utama</option><option value="verval">Sistem Verval</option><option value="keuangan">Keuangan</option><option value="guru">Layanan GTK</option><option value="kepegawaian">ASN</option><option value="daerah">Portal Daerah</option>
+            </select>
+            <select id="new-link-icon" class="w-full text-sm p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none font-bold focus:ring-2 focus:ring-blue-500 cursor-pointer">
+              <option value="fa-globe">Globe/Web</option><option value="fa-database">Database</option><option value="fa-id-card">Kartu Identitas</option><option value="fa-computer">Komputer</option><option value="fa-wallet">Keuangan</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-6 flex justify-end gap-2.5">
+          <button onclick="closeAddLinkModal()" class="px-4 py-2 text-xs font-bold text-slate-500">Batal</button>
+          <button onclick="saveCustomLinkLocal()" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition">Simpan Tautan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL TAMBAH AGENDA -->
+    <div id="add-agenda-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 font-sans">
+      <div class="bg-white dark:bg-slate-800 w-full max-w-md mx-4 p-6 rounded-3xl border shadow-2xl relative transform scale-95 transition-all duration-300">
+        <h3 class="font-space font-bold text-slate-900 dark:text-white text-base mb-4"><i class="fa-solid fa-list-check text-blue-500"></i> Buat Agenda Baru</h3>
+        <textarea id="agenda-input-text" rows="4" placeholder="Tuliskan draf tugas administrasi sekolah yang harus segera diselesaikan..." class="w-full text-sm p-4 rounded-2xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+        <div class="mt-6 flex justify-end gap-2.5">
+          <button onclick="closeAddAgendaModal()" class="px-4 py-2 text-xs font-bold text-slate-500">Batal</button>
+          <button onclick="addAgendaItem()" class="px-6 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black transition">Simpan Agenda</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL TAMBAH MEMO BARU -->
+    <div id="add-memo-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 font-sans">
+      <div class="bg-white dark:bg-slate-800 w-full max-w-md mx-4 p-5 sm:p-6 rounded-3xl border shadow-2xl relative transform scale-95 transition-all duration-300">
+        <div class="flex justify-between items-center pb-4 mb-4 border-b border-slate-100 dark:border-slate-700">
+          <h3 class="font-space font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+            <i class="fa-solid fa-sticky-note text-amber-500"></i> Tambah Memo Catatan Baru
+          </h3>
+          <button onclick="closeAddMemoModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Judul Catatan</label>
+              <input type="text" id="note-title-input" placeholder="Judul memo..." class="w-full text-xs p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 focus:ring-1 focus:ring-blue-500 outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Tanggal Pelaksanaan</label>
+              <input type="date" id="note-date-input" class="w-full text-xs p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 font-mono focus:ring-1 focus:ring-blue-500 outline-none cursor-pointer" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Rincian Informasi Memo</label>
+            <textarea id="note-body-input" rows="4" placeholder="Tulis catatan penting sekolah di sini..." class="w-full text-xs p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 focus:ring-1 focus:ring-blue-500 outline-none"></textarea>
+          </div>
+        </div>
+        <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-2.5">
+          <button onclick="closeAddMemoModal()" class="px-4 py-2.5 rounded-xl border border-slate-200/60 dark:border-slate-700 text-xs font-bold text-slate-500">Batal</button>
+          <button onclick="addQuickNote()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition shadow-lg shadow-blue-500/10">Simpan Catatan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL TEMPLATE WA -->
+    <div id="templates-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 font-sans">
+      <div class="bg-white dark:bg-slate-800 w-full max-w-lg mx-4 p-5 sm:p-6 rounded-3xl border shadow-2xl relative transform scale-95 transition-all duration-300 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4 border-b pb-4">
+          <h3 class="font-space font-bold text-slate-900 dark:text-white text-base flex items-center gap-2"><i class="fa-brands fa-whatsapp text-emerald-500 text-xl"></i> Pilihan Template WhatsApp</h3>
+          <button onclick="closeTemplatesModal()" class="text-slate-400"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+        <div id="templates-list-view" class="space-y-4">
+          <div id="templates-list-container" class="space-y-2.5 max-h-60 overflow-y-auto pr-1"></div>
+          <button onclick="showAddTemplateForm()" class="w-full py-2 bg-emerald-50 text-emerald-600 border border-emerald-200 text-xs font-bold rounded-xl hover:bg-emerald-100 transition">+ Buat Template Kustom Baru</button>
+        </div>
+        <div id="template-form-view" class="hidden space-y-4">
+          <input type="hidden" id="template-edit-id" />
+          <input type="text" id="template-name-input" placeholder="Nama/Judul Template Siaran" class="w-full text-xs p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none" />
+          <textarea id="template-text-input" rows="5" placeholder="Tulis naskah pesan siaran... gunakan penanda variabel {nama} untuk nama pendidik." class="w-full text-xs p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none"></textarea>
+          <div class="flex justify-end gap-2"><button onclick="hideTemplateForm()" class="px-4 py-2 text-xs font-bold text-slate-500">Batal</button><button onclick="saveTemplate()" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition">Simpan Template</button></div>
+        </div>
+        <div class="mt-6 flex justify-end"><button onclick="closeTemplatesModal()" class="px-5 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl text-xs font-bold hover:bg-slate-200 transition">Tutup Dialog</button></div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-4 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-2.5 bg-slate-900/95 dark:bg-white text-white dark:text-slate-900 text-xs py-3.5 px-5 rounded-xl shadow-xl border border-slate-800 dark:border-slate-100 font-sans">
+      <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 dark:text-emerald-600 text-base"></i>
+      <span id="toast-message" class="font-bold">Notifikasi sistem aktif</span>
+    </div>
+
     <!-- MASTER SECURE PIN OVERLAY SCREEN -->
     <div id="master-pin-screen" class="fixed inset-0 z-50 bg-slate-950/95 flex flex-col items-center justify-center transition-all duration-500">
       <div class="text-center p-8 max-w-sm mx-4 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl space-y-6 font-sans">
@@ -452,6 +590,7 @@
           <p id="pin-screen-desc" class="text-xs text-slate-400 leading-relaxed">Masukkan 6-digit PIN Keamanan untuk mengenkripsi seluruh kredensial 2FA dan memo secara aman di komputer ini.</p>
         </div>
         <div class="space-y-4">
+          <!-- Input password menerima enter langsung submit -->
           <input type="password" id="pin-input-field" maxlength="6" pattern="[0-9]*" inputmode="numeric" placeholder="••••••" onkeydown="if(event.key === 'Enter') handlePinSubmit()" class="w-full tracking-[1em] text-center text-2xl font-bold p-3 bg-slate-950 border border-slate-800 rounded-xl text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition" />
           <button id="btn-submit-pin" onclick="handlePinSubmit()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition duration-200 shadow-lg shadow-blue-500/20">
             <span id="pin-btn-text">Atur PIN Baru</span>
