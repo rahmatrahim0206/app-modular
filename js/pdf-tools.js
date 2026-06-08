@@ -393,12 +393,10 @@ async function processTextToPdf() {
   }
 }
 
-// --- LOGIKA PDF KE WORD (PDF TO WORD TEXT EXTRACTION) ---
 async function handlePdfToWordSelect(e) {
   const file = e.target.files[0];
   if (!file) return;
 
-  // PERBAIKAN: Validasi tipe MIME atau ekstensi .pdf
   const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith('.pdf');
   if (isPdf) {
     selectedWordFile = file;
@@ -409,14 +407,32 @@ async function handlePdfToWordSelect(e) {
     
     try {
       const arrayBuffer = await file.arrayBuffer();
-      // Melakukan parsing teks PDF offline halaman pertama untuk preview kilat
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       const page = await pdf.getPage(1);
       const textContent = await page.getTextContent();
-      const firstPageText = textContent.items.map(item => item.str).join(' ');
+      
+      // Restrukturisasi koordinat vertikal untuk preview halaman pertama
+      const lines = {};
+      textContent.items.forEach(item => {
+        if (!item.str || item.str.trim() === '') return;
+        const y = Math.round(item.transform[5]);
+        let foundY = Object.keys(lines).find(existingY => Math.abs(existingY - y) < 6);
+        if (foundY) {
+          lines[foundY].push(item);
+        } else {
+          lines[y] = [item];
+        }
+      });
+      
+      const sortedYKeys = Object.keys(lines).map(Number).sort((a, b) => b - a);
+      let previewText = "";
+      sortedYKeys.slice(0, 8).forEach(y => {
+        const lineItems = lines[y].sort((a, b) => a.transform[4] - b.transform[4]);
+        previewText += lineItems.map(item => item.str).join(' ') + "\n";
+      });
       
       if (previewEl) {
-        previewEl.textContent = firstPageText.substring(0, 150) + (firstPageText.length > 150 ? "..." : "");
+        previewEl.textContent = previewText.trim() ? previewText.substring(0, 200) + "..." : "Tidak ada teks terbaca di halaman pertama.";
       }
     } catch (err) {
       console.error("Gagal membaca preview PDF:", err);
@@ -434,32 +450,107 @@ async function processPdfToWord() {
     return;
   }
   
-  showToast("Membaca seluruh teks PDF secara offline...", "warning");
+  showToast("Membaca seluruh teks PDF secara luring...", "warning");
   try {
     const arrayBuffer = await selectedWordFile.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    let fullTextResult = "";
+    let htmlPagesContent = "";
     
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const textContent = await page.getTextContent();
-      const pageText = textContent.items.map(item => item.str).join(' ');
-      fullTextResult += `[Halaman ${i}]\n\n${pageText}\n\n`;
+      
+      // Mengelompokkan item teks berdasarkan koordinat vertikal Y (untuk menyusun ulang baris asli)
+      const lines = {};
+      textContent.items.forEach(item => {
+        if (!item.str || item.str.trim() === '') return;
+        const y = Math.round(item.transform[5]);
+        
+        // Gabungkan baris jika jarak perbedaan Y di bawah 6 point
+        let foundY = Object.keys(lines).find(existingY => Math.abs(existingY - y) < 6);
+        if (foundY) {
+          lines[foundY].push(item);
+        } else {
+          lines[y] = [item];
+        }
+      });
+      
+      // Urutkan baris dari atas halaman ke bawah (Y besar ke kecil)
+      const sortedYKeys = Object.keys(lines).map(Number).sort((a, b) => b - a);
+      
+      let pageHtml = "";
+      sortedYKeys.forEach(y => {
+        // Urutkan kata dari kiri ke kanan (X kecil ke besar)
+        const lineItems = lines[y].sort((a, b) => a.transform[4] - b.transform[4]);
+        const lineStr = lineItems.map(item => item.str).join(' ').trim();
+        
+        if (lineStr.length > 0) {
+          // Mendeteksi baris judul / kop surat agar otomatis berformat heading di Word
+          if (lineStr.length < 80 && (lineStr === lineStr.toUpperCase() || lineStr.startsWith("BAB ") || lineStr.startsWith("KEMENTERIAN") || lineStr.startsWith("KEPUTUSAN"))) {
+            pageHtml += `<p style="margin-top: 14pt; margin-bottom: 6pt; font-family: 'Segoe UI', Arial, sans-serif; font-size: 12pt; font-weight: bold; text-align: center; color: #1a365d;">${lineStr}</p>`;
+          } else {
+            pageHtml += `<p style="margin: 0 0 8pt 0; text-align: justify; font-family: 'Calibri', Arial, sans-serif; font-size: 11pt; line-height: 1.5; text-indent: 0.5in; color: #2d3748;">${lineStr}</p>`;
+          }
+        }
+      });
+      
+      htmlPagesContent += `
+        <!-- Rentang Halaman Dokumen -->
+        <p class="page-header" style="font-family: 'Segoe UI', sans-serif; font-size: 9pt; color: #a0aec0; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; margin-bottom: 18pt; text-transform: uppercase; font-weight: bold;">Halaman ${i} dari ${pdf.numPages}</p>
+        <div style="margin-bottom: 30pt;">
+          ${pageHtml || '<p style="color: #cbd5e0; font-style: italic;">Tidak ada teks terdeteksi di halaman ini.</p>'}
+        </div>
+      `;
+      
+      // Sisipkan batas halaman fisik MS Word
+      if (i < pdf.numPages) {
+        htmlPagesContent += `<br style="page-break-before: always; clear: both; mso-break-type: section-break;" />`;
+      }
     }
     
-    if (!fullTextResult.trim()) {
+    if (!htmlPagesContent.replace(/<[^>]*>/g, '').trim()) {
       showToast("Gagal mendeteksi teks. Berkas PDF ini mungkin hasil scan (berbentuk gambar).", "warning");
       return;
     }
     
-    // Trik mengunduh teks ke Word (.doc) yang kompatibel dibaca MS Word
+    // Desain cetakan markup dokumen A4 premium Word
     const blobHtml = `
       <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-      <head><title>Ekstraksi Dokumen PDF ke Word</title>
-      <style>body { font-family: Arial, sans-serif; line-height: 1.6; }</style>
+      <head>
+        <meta charset="utf-8">
+        <!--[if gte mso 9]>
+        <xml>
+          <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>100</w:Zoom>
+            <w:DoNotOptimizeForBrowser/>
+          </w:WordDocument>
+        </xml>
+        <![endif]-->
+        <style>
+          @page Section1 {
+            size: 595.3pt 841.9pt; /* Ukuran A4 */
+            margin: 1.0in 1.0in 1.0in 1.0in; /* Margin standar */
+            mso-header-margin: .5in;
+            mso-footer-margin: .5in;
+            mso-paper-source: 0;
+          }
+          div.Section1 {
+            page: Section1;
+          }
+          body {
+            font-family: 'Calibri', 'Arial', sans-serif;
+            font-size: 11pt;
+            color: #2D3748;
+            line-height: 1.5;
+            background-color: #ffffff;
+          }
+        </style>
       </head>
       <body>
-        <div style="white-space: pre-line;">${fullTextResult}</div>
+        <div class="Section1">
+          ${htmlPagesContent}
+        </div>
       </body>
       </html>
     `;
