@@ -55,7 +55,7 @@
   <body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 relative">
     
     <!-- HEADER BAR -->
-    <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
+    <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/60 dark:border-slate-800">
       <div class="max-w-[130rem] mx-auto px-4 sm:px-8 lg:px-12 h-16 flex items-center justify-between">
         <div class="flex items-center space-x-2 sm:space-x-3">
           <div class="bg-gradient-to-tr from-sky-500 via-blue-600 to-indigo-600 p-2 sm:p-2.5 rounded-xl shadow-lg shadow-blue-500/20 text-white">
@@ -85,7 +85,7 @@
                   const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                   const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
                   timeEl.textContent = `${String(witaDate.getHours()).padStart(2, '0')}:${String(witaDate.getMinutes()).padStart(2, '0')}:${String(witaDate.getSeconds()).padStart(2, '0')} WITA`;
-                  dateEl.textContent = `${days[witaDate.getDay()]}, ${witaDate.getDate()} ${months[witaDate.getMonth()]} ${witaDate.getFullYear()}`;
+                  dateEl.textContent = `${days[witaDate.getDay()]} , ${witaDate.getDate()} ${months[witaDate.getMonth()]} ${witaDate.getFullYear()}`;
                 }
               })();
             </script>
@@ -181,7 +181,7 @@
 
               <button onclick="selectCategory('2fa_auth')" data-category="2fa_auth" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200"><span class="flex items-center gap-1"><i class="fa-solid fa-shield-halved text-blue-500"></i> Kunci Keamanan</span> <span id="badge-2fa_auth" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span></button>
               
-              <!-- PERBAIKAN: Mengubah "Ujian ANBK" menjadi "Portal TKA" pada daftar navigasi -->
+              <!-- Portal TKA / ANBK -->
               <button onclick="selectCategory('portal_tka')" data-category="portal_tka" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200">
                 <span>Portal TKA</span> 
                 <span id="badge-portal_tka" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span>
@@ -624,7 +624,7 @@
             <!-- PRIORITAS KERJA UTAMA -->
             <div id="countdown-active-task-box" class="pb-3 border-b border-slate-100 dark:border-slate-700/60 space-y-2">
               <span class="text-[9px] font-black tracking-widest text-blue-600 dark:text-blue-400 uppercase block">🎯 Prioritas Kerja Utama</span>
-              <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-start justify-between gap-3 shadow-xs">
+              <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-105 dark:border-slate-800 flex items-start justify-between gap-3 shadow-xs">
                 <span id="countdown-active-task-text" class="text-[11px] font-medium leading-relaxed text-slate-600 dark:text-slate-300 break-words flex-1">Memuat tugas aktif...</span>
                 <button id="countdown-active-task-btn" class="text-blue-600 hover:text-emerald-500 font-bold text-xs flex-shrink-0 transition-colors hidden" title="Tandai Selesai">
                   <i class="fa-solid fa-circle-check text-base"></i>
