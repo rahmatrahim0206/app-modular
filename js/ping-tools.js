@@ -177,18 +177,20 @@ function toggleAutoPing() {
   }
 }
 
+// MEMPERBAIKI KELAS TOMBOL DINAMIS SUPAYA TIDAK OVERFLOW/KELUAR BOX DI LAYAR HP
 function updateAutoPingUI(isActive) {
   const btn = document.getElementById('btn-toggle-autoping');
   const icon = document.getElementById('icon-autoping');
   const text = document.getElementById('text-autoping');
   if (!btn || !icon || !text) return;
 
+  // px-2 py-1.5 (Sangat rapat di layar HP kecil) dan text-[10px] beralih ke px-4 py-2.5 & text-xs di tablet/PC (sm:)
   if (isActive) {
-    btn.className = "flex-1 sm:flex-none px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shadow-md";
+    btn.className = "flex-1 sm:flex-none px-2 py-1.5 sm:px-4 sm:py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-[10px] sm:text-xs font-bold rounded-xl transition flex items-center justify-center gap-1 sm:gap-1.5 shadow-md truncate";
     icon.className = "fa-solid fa-stop";
     text.textContent = "Hentikan Auto";
   } else {
-    btn.className = "flex-1 sm:flex-none px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shadow-md";
+    btn.className = "flex-1 sm:flex-none px-2 py-1.5 sm:px-4 sm:py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-xs font-bold rounded-xl transition flex items-center justify-center gap-1 sm:gap-1.5 shadow-md truncate";
     icon.className = "fa-solid fa-play animate-pulse";
     text.textContent = "Aktifkan Auto";
   }
