@@ -2,7 +2,7 @@
 // UTILITY FUNCTIONS, CLOCK, THEME, AND IDLE CONTROL
 // ==========================================================
 
-// Fungsi Salin Teks ke Clipboard
+// Fungsi Salin Teks ke Clipboard (Aman untuk iFrame Sandbox)
 function copyText(textToCopy, successMessage) {
   const dummy = document.createElement('textarea');
   dummy.value = textToCopy;
@@ -15,12 +15,14 @@ function copyText(textToCopy, successMessage) {
   }
 }
 
-// Fungsi Acak Kata Sandi Aman
+// Fungsi Acak Kata Sandi Aman dengan Cryptographically Secure Pseudo-Random Number Generator (CSPRNG)
 function generateSecurePassword() {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
   let pass = "";
+  const randomValues = new Uint32Array(12);
+  window.crypto.getRandomValues(randomValues);
   for (let i = 0; i < 12; i++) {
-    pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    pass += chars.charAt(randomValues[i] % chars.length);
   }
   const pwInput = document.getElementById('generated-password-input');
   if (pwInput) pwInput.value = pass;
@@ -33,7 +35,7 @@ function copyGeneratedPassword() {
   }
 }
 
-// Pembaruan Jam & Hari WITA Aktif
+// Pembaruan Jam & Hari WITA Aktif secara Presisi (WITA = UTC+8)
 function updateClock() {
   const timeDisplay = document.getElementById('header-time');
   const dateDisplay = document.getElementById('header-date');
@@ -52,7 +54,7 @@ function toggleTheme() {
   const isDark = document.documentElement.classList.toggle('dark');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
   const icon = document.getElementById('theme-icon');
-  if (icon) icon.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  if (icon) icon.className = isDark ? 'fa-solid fa-sun text-amber-400' : 'fa-solid fa-moon text-slate-600';
   if (typeof initCalendar === 'function') initCalendar();
 }
 
@@ -79,7 +81,7 @@ function updateOnlineStatus(isOnline) {
   }
 }
 
-// Detektor Kunci Layar Otomatis
+// Detektor Kunci Layar Otomatis saat Pengguna Idle
 function resetIdleTimer() { 
   if (!sessionLocked) idleTimeCounter = 0; 
 }
@@ -110,7 +112,7 @@ function unlockSession() {
   }
 }
 
-// 1. Mencegah Klik Kanan (Context Menu) di Seluruh Area Aplikasi
+// 1. Mencegah Klik Kanan (Context Menu) demi Keamanan Kredensial Pengguna
 document.addEventListener('contextmenu', function(e) {
   const activeEl = document.activeElement;
   if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
