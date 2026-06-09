@@ -9,7 +9,7 @@ var CONFIG = {
   SCHOOL_CODE_ABBR: "SPENTIG", 
   NPSN: "40312436",
   OPERATOR_NAME: "Rahmat Rahim",
-  RAPOR_URL: "https://rapor.smpn3makassar.sch.id",
+  RAPOR_URL: "https://rapor.smpn3mks.sch.id",
   CUTOFF_DATE: "August 31, 2026 23:59:59",
   CUTOFF_TITLE: "Batas Akhir Pemutakhiran Dapodik 2026",
   CUTOFF_DESC: "Batas waktu sinkronisasi data profil sekolah dan peserta didik untuk perhitungan dana BOS.",
@@ -194,7 +194,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   setInterval(updateClock, 1000);
   
-  // Daftarkan selectCategory secara eksplisit ke window demi ketahanan
   if (typeof selectCategory === 'function') {
     window.selectCategory = selectCategory;
   }
