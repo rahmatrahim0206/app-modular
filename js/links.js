@@ -55,7 +55,10 @@ function saveCustomLinkLocal() {
   const d = document.getElementById('new-link-desc').value.trim();
   const c = document.getElementById('new-link-category').value;
   const i = document.getElementById('new-link-icon').value;
-  if (!t || !u || !d) return showToast("Harap lengkapi semua formulir!", "warning");
+  if (!t || !u || !d) {
+    if (typeof showToast === 'function') showToast("Harap lengkapi semua formulir!", "warning");
+    return;
+  }
   
   linksData.push({ 
     id: `link-${Date.now()}`, 
@@ -70,7 +73,7 @@ function saveCustomLinkLocal() {
   saveLinks();
   renderDynamicLinks();
   closeAddLinkModal();
-  showToast("Tautan kustom berhasil ditambahkan!");
+  if (typeof showToast === 'function') showToast("Tautan kustom berhasil ditambahkan!");
   
   document.getElementById('new-link-title').value = '';
   document.getElementById('new-link-url').value = '';
@@ -78,29 +81,33 @@ function saveCustomLinkLocal() {
 }
 
 function deleteCustomLink(id) {
-  showCustomConfirm("Hapus Tautan?", "Tautan kustom ini akan dihapus secara permanen.", () => {
-    linksData = linksData.filter(l => l.id !== id);
-    saveLinks();
-    renderDynamicLinks();
-    showToast("Tautan berhasil dihapus.");
-  }, 'fa-trash-can');
+  if (typeof showCustomConfirm === 'function') {
+    showCustomConfirm("Hapus Tautan?", "Tautan kustom ini akan dihapus secara permanen.", () => {
+      linksData = linksData.filter(l => l.id !== id);
+      saveLinks();
+      renderDynamicLinks();
+      if (typeof showToast === 'function') showToast("Tautan berhasil dihapus.");
+    }, 'fa-trash-can');
+  }
 }
 
 function resetToDefaultLinks() {
-  showCustomConfirm("Reset Portal?", "Semua tautan kustom Anda akan terhapus dan kembali ke setelan pabrik.", () => {
-    fetch('data/default-links.json')
-      .then(res => res.json())
-      .then(data => {
-        linksData = data;
-        saveLinks();
-        renderDynamicLinks();
-        showToast("Sistem berhasil di-reset!");
-      })
-      .catch(() => {
-        linksData = [...defaultSeedLinks]; 
-        saveLinks();
-        renderDynamicLinks();
-        showToast("Sistem berhasil di-reset!");
-      });
-  }, 'fa-arrows-rotate');
+  if (typeof showCustomConfirm === 'function') {
+    showCustomConfirm("Reset Portal?", "Semua tautan kustom Anda akan terhapus dan kembali ke setelan pabrik.", () => {
+      fetch('data/default-links.json')
+        .then(res => res.json())
+        .then(data => {
+          linksData = data;
+          saveLinks();
+          renderDynamicLinks();
+          if (typeof showToast === 'function') showToast("Sistem berhasil di-reset!");
+        })
+        .catch(() => {
+          linksData = [...defaultSeedLinks]; 
+          saveLinks();
+          renderDynamicLinks();
+          if (typeof showToast === 'function') showToast("Sistem berhasil di-reset!");
+        });
+    }, 'fa-arrows-rotate');
+  }
 }
