@@ -151,7 +151,7 @@
         
         <!-- KOLOM KIRI (Navigasi Kategori & Penghitung Mundur) -->
         <aside class="lg:col-span-3 lg:sticky lg:top-20 h-fit space-y-6">
-          <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-md">
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-md relative z-30">
             <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-1.5"><i class="fa-solid fa-layer-group text-blue-500"></i> Kategori</h3>
             <nav class="flex lg:flex-col overflow-x-auto no-scrollbar gap-2 lg:gap-1.5" id="category-tabs">
               <button onclick="selectCategory('semua')" data-category="semua" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-blue-600 text-white shadow-md"><span>Semua</span> <span id="badge-semua" class="ml-1.5 bg-white/20 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span></button>
@@ -186,7 +186,7 @@
           </div>
 
           <!-- WIDGET BATAS CUT-OFF DAPODIK -->
-          <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-md relative overflow-hidden">
+          <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-md relative overflow-hidden z-20">
             <div class="absolute right-0 bottom-0 opacity-5 translate-x-4 translate-y-4 text-slate-400 dark:text-slate-300">
               <i class="fa-solid fa-hourglass-half text-9xl"></i>
             </div>
@@ -226,7 +226,7 @@
           </div>
         </aside>
 
-        <!-- KOLOM TENGAH: SEARCH, TAUTAN INTEGRASI, & RUANG KERJA PDF -->
+        <!-- KOLOM TENGAH: SEARCH, TAUTAN INTEGRASI, & WORKSPACES -->
         <section class="lg:col-span-6 space-y-6">
           
           <!-- SEARCH BAR -->
@@ -453,9 +453,7 @@
               </div>
 
               <!-- Grid Status Server Datadik -->
-              <div id="ping-grid-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Diisi secara dinamis melalui js/ping-tools.js -->
-              </div>
+              <div id="ping-grid-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 
               <!-- Indikator Keterangan Latensi -->
               <div class="grid grid-cols-3 gap-3 pt-2 text-center text-[10px] font-bold">
@@ -552,6 +550,11 @@
                 <span class="font-mono text-[9px]">AJAX Bandwidth Reader</span>
               </footer>
             </div>
+          </article>
+
+          <!-- RENDER LINK CARD -->
+          <article id="panel-links-main-wrapper" class="space-y-6">
+            <div id="dynamic-links-wrapper" class="space-y-6 sm:space-y-8"></div>
           </article>
 
           <div id="no-results-message" class="hidden text-center py-12 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-8">
