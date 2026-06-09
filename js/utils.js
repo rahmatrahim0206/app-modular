@@ -2,7 +2,7 @@
 // UTILITY FUNCTIONS, CLOCK, THEME, AND IDLE CONTROL
 // ==========================================================
 
-// Fungsi Salin Teks ke Clipboard (Dengan penanganan fallback execCommand)
+// Fungsi Salin Teks ke Clipboard
 function copyText(textToCopy, successMessage) {
   const dummy = document.createElement('textarea');
   dummy.value = textToCopy;
@@ -10,7 +10,9 @@ function copyText(textToCopy, successMessage) {
   dummy.select();
   document.execCommand('copy');
   document.body.removeChild(dummy);
-  showToast(successMessage || "Teks berhasil disalin!");
+  if (typeof showToast === 'function') {
+    showToast(successMessage || "Teks berhasil disalin!");
+  }
 }
 
 // Fungsi Acak Kata Sandi Aman
@@ -102,39 +104,47 @@ function unlockSession() {
     screen.classList.replace('pointer-events-auto', 'pointer-events-none');
     screen.classList.replace('opacity-100', 'opacity-0');
     card.classList.replace('scale-100', 'scale-95');
-    showToast("Sesi kerja berhasil dipulihkan!", "success");
+    if (typeof showToast === 'function') {
+      showToast("Sesi kerja berhasil dipulihkan!", "success");
+    }
   }
 }
 
-// --- ANTI-INSPECT PROTECTION MODULE ---
+// 1. Mencegah Klik Kanan (Context Menu) di Seluruh Area Aplikasi
 document.addEventListener('contextmenu', function(e) {
   const activeEl = document.activeElement;
   if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
     return; 
   }
   e.preventDefault();
-  showToast("⚠️ Klik kanan dinonaktifkan demi keamanan kredensial.", "warning");
+  if (typeof showToast === 'function') {
+    showToast("⚠️ Klik kanan dinonaktifkan demi keamanan kredensial.", "warning");
+  }
 });
 
+// 2. Memblokir Tombol Shortcut Developer Tools (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U)
 document.addEventListener('keydown', function(e) {
   if (e.keyCode === 123) {
     e.preventDefault();
-    showToast("⚠️ Developer tools dinonaktifkan.", "error");
+    if (typeof showToast === 'function') showToast("⚠️ Developer tools dinonaktifkan.", "error");
     return false;
   }
+  
   if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
     e.preventDefault();
-    showToast("⚠️ Inspeksi elemen dilarang.", "error");
+    if (typeof showToast === 'function') showToast("⚠️ Inspeksi elemen dilarang.", "error");
     return false;
   }
+  
   if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
     e.preventDefault();
-    showToast("⚠️ Akses konsol dinonaktifkan.", "error");
+    if (typeof showToast === 'function') showToast("⚠️ Akses konsol dinonaktifkan.", "error");
     return false;
   }
+  
   if (e.ctrlKey && e.keyCode === 85) {
     e.preventDefault();
-    showToast("⚠️ Akses kode sumber dinonaktifkan.", "error");
+    if (typeof showToast === 'function') showToast("⚠️ Akses kode sumber dinonaktifkan.", "error");
     return false;
   }
 });
