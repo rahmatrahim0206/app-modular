@@ -302,7 +302,7 @@ function renderAuthenticatorKeys() {
     const stopwatchAnimClass = secondsLeft < 6 ? "animate-ping" : "";
 
     htmlContent += `
-      <div class="p-4 bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl hover:shadow-md transition duration-200">
+      <div class="p-4 bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 rounded-2xl hover:shadow-md transition duration-200 animate-fade-in">
         <div class="flex justify-between items-start mb-2.5">
           <div class="truncate pr-2 w-[65%]">
             <h4 class="text-xs font-black truncate text-slate-900 dark:text-white" title="${k.label}">${k.label}</h4>
@@ -382,7 +382,7 @@ function delete2FaKey(id) {
   }
 }
 
-// TOTP clock ticking engine
+// Mesin Detak Waktu Mundur TOTP 30 Detik
 function startTotpEngine() {
   if (totpIntervalId) clearInterval(totpIntervalId);
   
@@ -411,7 +411,7 @@ function startTotpEngine() {
   totpIntervalId = setInterval(updateTick, 1000);
 }
 
-// QR Scanner Cam control
+// Buka Kamera Pemindai QR
 function toggleQrScanner() {
   if (typeof Html5Qrcode === 'undefined') {
     if (typeof showToast === 'function') showToast("Pustaka QR Scanner belum siap dimuat.", "error");
