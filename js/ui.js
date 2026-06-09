@@ -2,8 +2,18 @@
 // RENDER CONTROLLER, CATEGORIES, ASSISTANT WIDGETS & PWA KIT
 // ==========================================================
 
+// --- DEKLARASI & INITIALISASI VARIABEL GLOBAL (PENGAMAN EROR) ---
+if (typeof activeCategory === 'undefined') window.activeCategory = 'semua';
+if (typeof toastTimeoutId === 'undefined') window.toastTimeoutId = null;
+if (typeof activeConfirmCallback === 'undefined') window.activeConfirmCallback = null;
+if (typeof currentDateObj === 'undefined') window.currentDateObj = new Date();
+if (typeof linksData === 'undefined') window.linksData = [];
+if (typeof agendaData === 'undefined') window.agendaData = [];
+if (typeof notesData === 'undefined') window.notesData = [];
+if (typeof waTemplates === 'undefined') window.waTemplates = [];
+
 // --- SISTEM TOAST NOTIFICATION ---
-function showToast(message, type = 'success') {
+window.showToast = function(message, type = 'success') {
   const toast = document.getElementById('toast');
   const toastMsg = document.getElementById('toast-message');
   const toastIcon = document.getElementById('toast-icon');
@@ -25,7 +35,7 @@ function showToast(message, type = 'success') {
 }
 
 // --- SISTEM MODAL CONFIRMATION CUSTOM ---
-function showCustomConfirm(title, message, callback, iconClass = 'fa-circle-question') {
+window.showCustomConfirm = function(title, message, callback, iconClass = 'fa-circle-question') {
   const modal = document.getElementById('custom-confirm-modal');
   if (!modal) return;
   document.getElementById('confirm-modal-title').textContent = title;
@@ -36,7 +46,7 @@ function showCustomConfirm(title, message, callback, iconClass = 'fa-circle-ques
   modal.children[0].classList.replace('scale-95', 'scale-100');
 }
 
-function closeCustomConfirm(approved = false) {
+window.closeCustomConfirm = function(approved = false) {
   const modal = document.getElementById('custom-confirm-modal');
   if (!modal) return;
   modal.classList.add('opacity-0', 'pointer-events-none');
@@ -46,7 +56,7 @@ function closeCustomConfirm(approved = false) {
 }
 
 // --- RENDERING DAFTAR TAUTAN ---
-function renderDynamicLinks() {
+window.renderDynamicLinks = function() {
   const wrapper = document.getElementById('dynamic-links-wrapper');
   if (!wrapper) return;
   wrapper.innerHTML = '';
@@ -61,7 +71,8 @@ function renderDynamicLinks() {
     'daerah': { title: 'Portal Dinas & Daerah', icon: 'fa-city', color: 'text-purple-500' }
   };
 
-  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  const searchInput = document.getElementById('search-input');
+  const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
   let total = 0;
   let counts = { semua: 0, utama: 0, verval: 0, keuangan: 0, guru: 0, kepegawaian: 0, pdf_tools: 5, ping_tools: 6, speedtest: 1, "2fa_auth": 0, ujian: 0, daerah: 0 };
 
@@ -120,7 +131,8 @@ function renderDynamicLinks() {
   if (noRes) totalVis === 0 ? noRes.classList.remove('hidden') : noRes.classList.add('hidden');
 }
 
-function selectCategory(cat) {
+// --- FUNGSI KLIK KATEGORI UTAMA ---
+window.selectCategory = function(cat) {
   activeCategory = cat;
   const p2Fa = document.getElementById('panel-2fa-main-auth');
   const pLinks = document.getElementById('panel-links-main-wrapper');
@@ -129,7 +141,6 @@ function selectCategory(cat) {
   const pSpeed = document.getElementById('panel-speedtest-wrapper');
   
   if (p2Fa && pLinks && pPdf && pPing && pSpeed) {
-    // Sembunyikan semua panel khusus terlebih dahulu
     p2Fa.classList.add('hidden');
     pLinks.classList.add('hidden');
     pPdf.classList.add('hidden');
@@ -138,7 +149,7 @@ function selectCategory(cat) {
 
     if (cat === '2fa_auth') {
       p2Fa.classList.remove('hidden');
-      renderAuthenticatorKeys();
+      if (typeof renderAuthenticatorKeys === 'function') renderAuthenticatorKeys();
     } else if (cat === 'pdf_tools') {
       pPdf.classList.remove('hidden');
       if (typeof resetPdfWorkspaces === 'function') resetPdfWorkspaces();
@@ -167,7 +178,7 @@ function selectCategory(cat) {
   filterLinksOrKeys();
 }
 
-function filterLinksOrKeys() {
+window.filterLinksOrKeys = function() {
   const s = document.getElementById('search-input'); 
   const c = document.getElementById('clear-search');
   if (s && c) s.value.trim().length > 0 ? c.classList.remove('hidden') : c.classList.add('hidden');
@@ -176,20 +187,20 @@ function filterLinksOrKeys() {
   
   if (activeCategory === '2fa_auth' || activeCategory === 'pdf_tools' || activeCategory === 'ping_tools' || activeCategory === 'speedtest') {
     if (noRes) noRes.classList.add('hidden');
-    if (activeCategory === '2fa_auth') renderAuthenticatorKeys();
+    if (activeCategory === '2fa_auth' && typeof renderAuthenticatorKeys === 'function') renderAuthenticatorKeys();
   } else {
     renderDynamicLinks();
   }
 }
 
-function clearSearchInput() { 
+window.clearSearchInput = function() { 
   const s = document.getElementById('search-input'); 
   if(s) s.value = ''; 
   filterLinksOrKeys(); 
 }
 
 // --- SISTEM PANEL TAB KOTAK 1 (KALENDER & BUKU SAKU MEMO) ---
-function switchCalendarMemoTab(t) {
+window.switchCalendarMemoTab = function(t) {
   const calendarBtn = document.getElementById('btn-tab-calendar');
   const memoBtn = document.getElementById('btn-tab-memo');
   const calendarPanel = document.getElementById('panel-tab-calendar');
@@ -211,7 +222,7 @@ function switchCalendarMemoTab(t) {
 }
 
 // Modul Modal Dialog
-function openAddAgendaModal() {
+window.openAddAgendaModal = function() {
   const m = document.getElementById('add-agenda-modal');
   if (m) {
     m.classList.remove('opacity-0', 'pointer-events-none');
@@ -219,7 +230,7 @@ function openAddAgendaModal() {
   }
 }
 
-function closeAddAgendaModal() {
+window.closeAddAgendaModal = function() {
   const m = document.getElementById('add-agenda-modal');
   if (m) {
     m.classList.add('opacity-0', 'pointer-events-none');
@@ -227,7 +238,7 @@ function closeAddAgendaModal() {
   }
 }
 
-function openAddMemoModal() {
+window.openAddMemoModal = function() {
   const m = document.getElementById('add-memo-modal');
   if (m) {
     m.classList.remove('opacity-0', 'pointer-events-none');
@@ -235,7 +246,7 @@ function openAddMemoModal() {
   }
 }
 
-function closeAddMemoModal() {
+window.closeAddMemoModal = function() {
   const m = document.getElementById('add-memo-modal');
   if (m) {
     m.classList.add('opacity-0', 'pointer-events-none');
@@ -243,7 +254,7 @@ function closeAddMemoModal() {
   }
 }
 
-function openAddLinkModal() {
+window.openAddLinkModal = function() {
   const m = document.getElementById('add-link-modal');
   if (m) {
     m.classList.remove('opacity-0', 'pointer-events-none');
@@ -251,7 +262,7 @@ function openAddLinkModal() {
   }
 }
 
-function closeAddLinkModal() {
+window.closeAddLinkModal = function() {
   const m = document.getElementById('add-link-modal');
   if (m) {
     m.classList.add('opacity-0', 'pointer-events-none');
@@ -260,14 +271,15 @@ function closeAddLinkModal() {
 }
 
 // --- TAB ASISTEN: AGENDA KERJA ---
-function saveAgenda() { secureSave(CONFIG.STORAGE_PREFIX + 'agendas', agendaData); }
+function saveAgenda() { if (typeof secureSave === 'function') secureSave(CONFIG.STORAGE_PREFIX + 'agendas', agendaData); }
 
-function renderAgenda() {
+window.renderAgenda = function() {
   const c = document.getElementById('agenda-list-container');
   if (!c) return;
   
   const fragment = document.createDocumentFragment();
-  const f = document.getElementById('agenda-filter').value;
+  const filterEl = document.getElementById('agenda-filter');
+  const f = filterEl ? filterEl.value : 'semua';
   const tasks = agendaData.filter(t => f === 'semua' ? true : (f === 'belum' ? !t.done : t.done)).sort((a,b)=>a.createdAt-b.createdAt);
   
   tasks.forEach(t => {
@@ -289,19 +301,20 @@ function renderAgenda() {
   updateCountdownTask();
 }
 
-function addAgendaItem() {
-  const t = document.getElementById('agenda-input-text').value.trim();
+window.addAgendaItem = function() {
+  const input = document.getElementById('agenda-input-text');
+  const t = input ? input.value.trim() : '';
   if(t) {
     agendaData.push({ id: 'ag-'+Date.now(), text: t, done: false, createdAt: Date.now() });
     saveAgenda();
     renderAgenda();
     closeAddAgendaModal();
-    document.getElementById('agenda-input-text').value = '';
+    if (input) input.value = '';
     showToast("Tugas baru berhasil disimpan ke agenda!");
   }
 }
 
-function toggleTaskDone(id) {
+window.toggleTaskDone = function(id) {
   const t = agendaData.find(x=>x.id===id);
   if(t) {
     t.done = !t.done;
@@ -310,7 +323,7 @@ function toggleTaskDone(id) {
   }
 }
 
-function deleteAgendaItem(id) {
+window.deleteAgendaItem = function(id) {
   agendaData = agendaData.filter(x=>x.id!==id);
   saveAgenda();
   renderAgenda();
@@ -327,7 +340,7 @@ function updateCountdownTask() {
 }
 
 // --- TAB ASISTEN: KALENDER KERJA ---
-function initCalendar() {
+window.initCalendar = function() {
   const names = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
   const y = currentDateObj.getFullYear();
   const m = currentDateObj.getMonth();
@@ -361,11 +374,11 @@ function initCalendar() {
   c.innerHTML = htmlBuffer.join('');
 }
 
-function prevMonth() { currentDateObj.setMonth(currentDateObj.getMonth()-1); initCalendar(); }
-function nextMonth() { currentDateObj.setMonth(currentDateObj.getMonth()+1); initCalendar(); }
+window.prevMonth = function() { currentDateObj.setMonth(currentDateObj.getMonth()-1); initCalendar(); }
+window.nextMonth = function() { currentDateObj.setMonth(currentDateObj.getMonth()+1); initCalendar(); }
 
 // --- TAB ASISTEN: BUKU SAKU MEMO ---
-function renderQuickNotes() {
+window.renderQuickNotes = function() {
   const c = document.getElementById('quick-notes-list');
   if(!c) return;
   
@@ -388,7 +401,7 @@ function renderQuickNotes() {
     btn.innerHTML = '<i class="fa-solid fa-trash text-[9px]"></i>';
     btn.onclick = () => {
       notesData = notesData.filter(x => x.id !== n.id);
-      secureSave(CONFIG.STORAGE_PREFIX + 'notes', notesData);
+      if (typeof secureSave === 'function') secureSave(CONFIG.STORAGE_PREFIX + 'notes', notesData);
       renderQuickNotes();
     };
     
@@ -402,22 +415,24 @@ function renderQuickNotes() {
   c.appendChild(fragment);
 }
 
-function addQuickNote() {
-  const t = document.getElementById('note-title-input').value.trim();
-  const b = document.getElementById('note-body-input').value.trim();
+window.addQuickNote = function() {
+  const tEl = document.getElementById('note-title-input');
+  const bEl = document.getElementById('note-body-input');
+  const t = tEl ? tEl.value.trim() : '';
+  const b = bEl ? bEl.value.trim() : '';
   if(t && b) {
     notesData.push({ id: 'n-'+Date.now(), title: t, body: b });
-    secureSave(CONFIG.STORAGE_PREFIX + 'notes', notesData);
+    if (typeof secureSave === 'function') secureSave(CONFIG.STORAGE_PREFIX + 'notes', notesData);
     renderQuickNotes();
     closeAddMemoModal();
-    document.getElementById('note-title-input').value = '';
-    document.getElementById('note-body-input').value = '';
+    if(tEl) tEl.value = '';
+    if(bEl) bEl.value = '';
     showToast("Memo catatan berhasil disimpan!");
   }
 }
 
 // --- TAB ASISTEN: BROADCAST WHATSAPP ---
-function populateWaSelect() {
+window.populateWaSelect = function() {
   const s = document.getElementById('wa-template-select');
   if(s) {
     s.innerHTML = '';
@@ -432,17 +447,25 @@ function populateWaSelect() {
   }
 }
 
-function copyBroadcastMessage() {
-  const t = waTemplates.find(x=>x.id===document.getElementById('wa-template-select').value);
-  if(t) copyText(t.text.replace(/{nama}/g, document.getElementById('wa-recipient-name').value || "Bapak/Ibu Guru"), "Pesan siaran WhatsApp berhasil disalin!");
+window.copyBroadcastMessage = function() {
+  const select = document.getElementById('wa-template-select');
+  const recInput = document.getElementById('wa-recipient-name');
+  if(!select) return;
+  const t = waTemplates.find(x=>x.id===select.value);
+  if(t && typeof copyText === 'function') {
+    copyText(t.text.replace(/{nama}/g, recInput ? recInput.value || "Bapak/Ibu Guru" : "Bapak/Ibu Guru"), "Pesan siaran WhatsApp berhasil disalin!");
+  }
 }
 
-function sendBroadcastWhatsApp() {
-  const t = waTemplates.find(x=>x.id===document.getElementById('wa-template-select').value);
-  if(t) window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(t.text.replace(/{nama}/g, document.getElementById('wa-recipient-name').value || "Bapak/Ibu Guru"))}`, '_blank');
+window.sendBroadcastWhatsApp = function() {
+  const select = document.getElementById('wa-template-select');
+  const recInput = document.getElementById('wa-recipient-name');
+  if(!select) return;
+  const t = waTemplates.find(x=>x.id===select.value);
+  if(t) window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(t.text.replace(/{nama}/g, recInput ? recInput.value || "Bapak/Ibu Guru" : "Bapak/Ibu Guru"))}`, '_blank');
 }
 
-function openTemplatesModal() {
+window.openTemplatesModal = function() {
   const m = document.getElementById('templates-modal');
   if (m) {
     m.classList.remove('opacity-0', 'pointer-events-none');
@@ -451,7 +474,7 @@ function openTemplatesModal() {
   }
 }
 
-function closeTemplatesModal() {
+window.closeTemplatesModal = function() {
   const m = document.getElementById('templates-modal');
   if (m) {
     m.classList.add('opacity-0', 'pointer-events-none');
@@ -459,7 +482,7 @@ function closeTemplatesModal() {
   }
 }
 
-function renderTemplatesList() {
+window.renderTemplatesList = function() {
   const container = document.getElementById('templates-list-container');
   if(!container) return;
   
@@ -481,7 +504,7 @@ function renderTemplatesList() {
   container.innerHTML = buffer.join('');
 }
 
-function showAddTemplateForm() {
+window.showAddTemplateForm = function() {
   const lv = document.getElementById('templates-list-view');
   const fv = document.getElementById('template-form-view');
   if (lv && fv) {
@@ -493,7 +516,7 @@ function showAddTemplateForm() {
   document.getElementById('template-text-input').value = '';
 }
 
-function hideTemplateForm() {
+window.hideTemplateForm = function() {
   const lv = document.getElementById('templates-list-view');
   const fv = document.getElementById('template-form-view');
   if (lv && fv) {
@@ -502,7 +525,7 @@ function hideTemplateForm() {
   }
 }
 
-function saveTemplate() {
+window.saveTemplate = function() {
   const id = document.getElementById('template-edit-id').value;
   const name = document.getElementById('template-name-input').value.trim();
   const text = document.getElementById('template-text-input').value.trim();
@@ -513,14 +536,14 @@ function saveTemplate() {
   } else {
     waTemplates.push({ id: 'wat-'+Date.now(), name, text });
   }
-  secureSave(CONFIG.STORAGE_PREFIX + 'wa-templates', waTemplates);
+  if (typeof secureSave === 'function') secureSave(CONFIG.STORAGE_PREFIX + 'wa-templates', waTemplates);
   populateWaSelect();
   renderTemplatesList();
   hideTemplateForm();
   showToast("Template pesan berhasil disimpan!");
 }
 
-function editTemplate(id) {
+window.editTemplate = function(id) {
   const t = waTemplates.find(x => x.id === id);
   if(t) {
     showAddTemplateForm();
@@ -530,10 +553,10 @@ function editTemplate(id) {
   }
 }
 
-function deleteTemplate(id) {
+window.deleteTemplate = function(id) {
   showCustomConfirm("Hapus Template?", "Template siaran pesan ini akan dihapus secara permanen.", () => {
     waTemplates = waTemplates.filter(x => x.id !== id);
-    secureSave(CONFIG.STORAGE_PREFIX + 'wa-templates', waTemplates);
+    if (typeof secureSave === 'function') secureSave(CONFIG.STORAGE_PREFIX + 'wa-templates', waTemplates);
     populateWaSelect();
     renderTemplatesList();
     showToast("Template berhasil dihapus.");
@@ -541,7 +564,7 @@ function deleteTemplate(id) {
 }
 
 // --- PWA OFFLINE DEPLOYMENT KIT DOWNLOADER ---
-function downloadPwaFile(fileType) {
+window.downloadPwaFile = function(fileType) {
   let content = "", filename = "", mimeType = "";
   if (fileType === 'manifest') {
     content = manifestJsonText; filename = "manifest.json"; mimeType = "application/json";
@@ -560,7 +583,7 @@ function downloadPwaFile(fileType) {
   showToast(`Berkas ${filename} berhasil diunduh! Silakan taruh di folder root Anda.`, "success");
 }
 
-function registerMainServiceWorker() {
+window.registerMainServiceWorker = function() {
   const statusText = document.getElementById('pwa-sw-status-text');
   const statusDot = document.getElementById('pwa-sw-status-dot');
   if ('serviceWorker' in navigator) {
@@ -580,7 +603,8 @@ function registerMainServiceWorker() {
 }
 
 // Real-time Countdown Cut-off BOS
-function startCutOffCountdown() {
+window.startCutOffCountdown = function() {
+  if (typeof CONFIG === 'undefined' || !CONFIG.CUTOFF_DATE) return;
   const targetDate = new Date(CONFIG.CUTOFF_DATE).getTime();
   const daysEl = document.getElementById("countdown-days");
   const hoursEl = document.getElementById("countdown-hours");
