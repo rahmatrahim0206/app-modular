@@ -41,7 +41,7 @@ const defaultSeedLinks = [
   { "id": "seed-26", "title": "Dinas Pendidikan Makassar", "url": "https://disdik.makassarkota.go.id", "desc": "Situs web utama Disdik Kota Makassar. Menyediakan informasi mutasi siswa, regulasi, dan kebijakan daerah.", "category": "daerah", "icon": "fa-city", "system": true },
   { "id": "seed-27", "title": "Portal PPDB Makassar", "url": "https://spmb.makassarkota.go.id/cloginsekolahx", "desc": "Penerimaan Peserta Didik Baru wilayah SMP Negeri Kota Makassar (Jalur Zonasi, Afirmasi, Prestasi).", "category": "daerah", "icon": "fa-city", "system": true },
   { "id": "seed-28", "title": "Uji Kecepatan Koneksi", "url": "https://speedtest.net", "desc": "Uji kehandalan latensi internet Lab Komputer sebelum melakukan sinkronisasi massal.", "category": "daerah", "icon": "fa-network-wired", "system": true },
-  { "id": "seed-mbg", "title": "Makan Bergizi Gratis (MBG) Portal", "url": "https://mbg.pdm.kemendikdasmen.go.id/portal", "desc": "Portal integrasi dan pendataan nasional implementasi program Makan Bergizi Gratis di sekolah.", "category": "daerah", "icon": "fa-utensils", "system": true }
+  { "id": "seed-mbg", "title": "Makan Bergizi Gratis (MBG) Portal", "url": "https://mbg.pdm.kemendikdasmen.go.id/portal", "desc": "Portal integrasi andal implementasi program Makan Bergizi Gratis di sekolah.", "category": "daerah", "icon": "fa-utensils", "system": true }
 ];
 
 function saveLinks() { 
