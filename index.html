@@ -73,7 +73,7 @@
           <div class="hidden sm:flex flex-col items-end font-mono text-[10px] md:text-xs text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-800 pr-3 md:pr-4">
             <span id="header-date" class="font-medium text-slate-400">Memuat tanggal...</span>
             <span id="header-time" class="font-bold text-slate-700 dark:text-slate-200">WITA</span>
-            <!-- Skrip Inline Pencegah Flicker Jam Pemuatan Awal -->
+            <!-- Skrip Inline Jam Pemuatan Awal -->
             <script>
               (function() {
                 const dateEl = document.getElementById('header-date');
@@ -85,7 +85,7 @@
                   const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                   const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
                   timeEl.textContent = `${String(witaDate.getHours()).padStart(2, '0')}:${String(witaDate.getMinutes()).padStart(2, '0')}:${String(witaDate.getSeconds()).padStart(2, '0')} WITA`;
-                  dateEl.textContent = `${days[witaDate.getDay()]} , ${witaDate.getDate()} ${months[witaDate.getMonth()]} ${witaDate.getFullYear()}`;
+                  dateEl.textContent = `${days[witaDate.getDay()]}, ${witaDate.getDate()} ${months[witaDate.getMonth()]} ${witaDate.getFullYear()}`;
                 }
               })();
             </script>
@@ -164,7 +164,7 @@
               <!-- Tab Menu: Peralatan PDF -->
               <button onclick="selectCategory('pdf_tools')" data-category="pdf_tools" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200">
                 <span class="flex items-center gap-1"><i class="fa-solid fa-file-pdf text-rose-500"></i> Ruang Kerja PDF</span> 
-                <span id="badge-pdf_tools" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">5</span>
+                <span id="badge-pdf_tools" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">6</span>
               </button>
 
               <!-- Tab Menu: Monitor Server / Latency Ping -->
@@ -181,7 +181,7 @@
 
               <button onclick="selectCategory('2fa_auth')" data-category="2fa_auth" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200"><span class="flex items-center gap-1"><i class="fa-solid fa-shield-halved text-blue-500"></i> Kunci Keamanan</span> <span id="badge-2fa_auth" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span></button>
               
-              <!-- Portal TKA / ANBK -->
+              <!-- Portal TKA -->
               <button onclick="selectCategory('portal_tka')" data-category="portal_tka" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200">
                 <span>Portal TKA</span> 
                 <span id="badge-portal_tka" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span>
@@ -339,6 +339,7 @@
               <nav class="flex overflow-x-auto no-scrollbar gap-1.5 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl" aria-label="Navigasi PDF">
                 <button onclick="switchPdfSubTab('merge')" id="btn-pdf-merge" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-black transition bg-white dark:bg-slate-800 text-blue-600 shadow-xs"><i class="fa-solid fa-object-group mr-1"></i> Gabung</button>
                 <button onclick="switchPdfSubTab('split')" id="btn-pdf-split" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"><i class="fa-solid fa-scissors mr-1"></i> Pisah</button>
+                <button onclick="switchPdfSubTab('compress')" id="btn-pdf-compress" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"><i class="fa-solid fa-file-zipper mr-1"></i> Kompres</button>
                 <button onclick="switchPdfSubTab('img2pdf')" id="btn-pdf-img2pdf" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"><i class="fa-solid fa-image mr-1"></i> Gambar ➜ PDF</button>
                 <button onclick="switchPdfSubTab('text2pdf')" id="btn-pdf-text2pdf" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"><i class="fa-solid fa-file-signature mr-1"></i> Teks ➜ PDF</button>
                 <button onclick="switchPdfSubTab('pdf2word')" id="btn-pdf-pdf2word" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"><i class="fa-solid fa-file-word mr-1"></i> PDF ➜ Word</button>
@@ -380,7 +381,56 @@
                 </button>
               </div>
 
-              <!-- SUB-TAB 3: GAMBAR KE PDF -->
+              <!-- SUB-TAB 3: KOMPRES PDF (ONLINE/LOKAL) -->
+              <div id="sub-pdf-compress" class="hidden space-y-4">
+                <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 p-6 rounded-2xl text-center cursor-pointer transition relative">
+                  <input type="file" id="pdf-compress-input" accept="application/pdf" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleCompressFileSelect(event)" />
+                  <i class="fa-solid fa-file-zipper text-3xl text-slate-300 dark:text-slate-600 mb-2"></i>
+                  <p id="pdf-compress-filename" class="text-xs font-bold text-slate-700 dark:text-slate-300">Tarik & Lepas File PDF disini</p>
+                  <p class="text-[10px] text-slate-400 mt-1">Atau klik untuk menjelajahi berkas komputer Anda</p>
+                </div>
+                <div id="pdf-compress-info" class="hidden p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700 flex justify-between items-center text-xs">
+                  <span class="truncate font-semibold text-slate-700 dark:text-slate-300"><i class="fa-solid fa-file-pdf text-rose-500 mr-1.5"></i><span id="compress-file-name">file.pdf</span></span>
+                  <span class="font-mono text-slate-500" id="compress-file-size">0 KB</span>
+                </div>
+                
+                <!-- Pilihan Tingkat Kompresi -->
+                <div class="grid grid-cols-3 gap-2">
+                  <button onclick="setCompressionLevel('low')" id="btn-compress-low" class="py-2.5 px-3 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50">Rendah (Kualitas Bagus)</button>
+                  <button onclick="setCompressionLevel('medium')" id="btn-compress-medium" class="py-2.5 px-3 rounded-xl text-xs font-bold border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 shadow-xs text-center">Sedang (Rekomendasi)</button>
+                  <button onclick="setCompressionLevel('high')" id="btn-compress-high" class="py-2.5 px-3 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50">Tinggi (Kualitas Rendah)</button>
+                </div>
+
+                <!-- Info Keamanan Lokal & Deskripsi -->
+                <div class="p-4 bg-emerald-50/50 dark:bg-emerald-950/15 rounded-2xl border border-emerald-100 dark:border-emerald-900/30 space-y-2 text-xs">
+                  <h4 class="font-bold text-emerald-800 dark:text-emerald-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-shield-halved text-emerald-500 animate-pulse"></i> Pemrosesan 100% Aman & Lokal
+                  </h4>
+                  <p class="text-slate-600 dark:text-slate-400 leading-relaxed text-[11px]">
+                    Kami sangat peduli dengan kerahasiaan berkas pendaftaran dan administrasi Anda.
+                  </p>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 text-[10px] text-slate-500 dark:text-slate-400">
+                    <div class="p-2.5 bg-white dark:bg-slate-900 border rounded-xl space-y-1">
+                      <span class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1"><i class="fa-solid fa-cloud-slash text-rose-500"></i> Tanpa Upload</span>
+                      <p class="leading-relaxed">File PDF diproses sepenuhnya di browser Anda. Dokumen, teks, dan data penting lainnya tidak pernah dikirim ke server kami, aman dari kebocoran data.</p>
+                    </div>
+                    <div class="p-2.5 bg-white dark:bg-slate-900 border rounded-xl space-y-1">
+                      <span class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1"><i class="fa-solid fa-bolt text-amber-500"></i> Mudah & Instan</span>
+                      <p class="leading-relaxed">Cukup pilih file, tentukan tingkat kompresi, dan biarkan sistem merender halaman dalam hitungan detik. Menghemat kuota internet dan waktu Anda.</p>
+                    </div>
+                    <div class="p-2.5 bg-white dark:bg-slate-900 border rounded-xl space-y-1">
+                      <span class="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1"><i class="fa-solid fa-folder-open text-blue-500"></i> Optimal</span>
+                      <p class="leading-relaxed">Cocok untuk memangkas ukuran PDF scan berat seperti Portofolio Guru, RPP, Sertifikat Diklat, Surat Keputusan (SK), maupun berkas ijazah.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <button onclick="processPdfCompression()" class="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-extrabold rounded-xl transition shadow-md flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-file-zipper"></i> Kompres & Unduh PDF
+                </button>
+              </div>
+
+              <!-- SUB-TAB 4: GAMBAR KE PDF -->
               <div id="sub-pdf-img2pdf" class="hidden space-y-4">
                 <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 p-6 rounded-2xl text-center cursor-pointer transition relative">
                   <input type="file" id="pdf-img-input" multiple accept="image/jpeg, image/png" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleImageSelect(event)" />
@@ -393,7 +443,7 @@
                 </button>
               </div>
 
-              <!-- SUB-TAB 4: TEKS KE PDF -->
+              <!-- SUB-TAB 5: TEKS KE PDF -->
               <div id="sub-pdf-text2pdf" class="hidden space-y-4">
                 <div>
                   <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Tulis Naskah / Dokumen Teks</label>
@@ -408,7 +458,7 @@
                 </button>
               </div>
 
-              <!-- SUB-TAB 5: PDF KE WORD -->
+              <!-- SUB-TAB 6: PDF KE WORD -->
               <div id="sub-pdf-pdf2word" class="hidden space-y-4">
                 <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 p-6 rounded-2xl text-center cursor-pointer transition relative">
                   <input type="file" id="pdf-to-word-input" accept="application/pdf" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handlePdfToWordSelect(event)" />
@@ -624,7 +674,7 @@
             <!-- PRIORITAS KERJA UTAMA -->
             <div id="countdown-active-task-box" class="pb-3 border-b border-slate-100 dark:border-slate-700/60 space-y-2">
               <span class="text-[9px] font-black tracking-widest text-blue-600 dark:text-blue-400 uppercase block">🎯 Prioritas Kerja Utama</span>
-              <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-105 dark:border-slate-800 flex items-start justify-between gap-3 shadow-xs">
+              <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-start justify-between gap-3 shadow-xs">
                 <span id="countdown-active-task-text" class="text-[11px] font-medium leading-relaxed text-slate-600 dark:text-slate-300 break-words flex-1">Memuat tugas aktif...</span>
                 <button id="countdown-active-task-btn" class="text-blue-600 hover:text-emerald-500 font-bold text-xs flex-shrink-0 transition-colors hidden" title="Tandai Selesai">
                   <i class="fa-solid fa-circle-check text-base"></i>
