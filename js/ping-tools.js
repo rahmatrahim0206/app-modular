@@ -14,15 +14,33 @@ var targetServerEndpoints = [
   { id: "srv-pip", name: "Sipintar PIP Kemendikdasmen (Pusat)", url: "https://pip.kemendikdasmen.go.id" } 
 ];
 
-function updateDynamicRaporEndpoint() {
-  const pipSrv = targetServerEndpoints.find(s => s.id === "srv-pip");
-  if (pipSrv && typeof CONFIG !== 'undefined' && CONFIG.RAPOR_URL) {
-    pipSrv.url = CONFIG.RAPOR_URL.includes("rapor") ? "https://pip.kemendikdasmen.go.id" : CONFIG.RAPOR_URL;
-  }
+// Menyelaraskan URL target uji latensi langsung dari database link kustom/sistem
+function syncPingEndpointsWithLinks() {
+  if (typeof linksData === 'undefined' || !Array.isArray(linksData)) return;
+
+  // Pemetaan ID server ping ke ID tautan sistem di default-links.json
+  const mapping = {
+    "srv-dapo": "seed-1",
+    "srv-vervalpd": "seed-11",
+    "srv-vervalptk": "seed-10",
+    "srv-spdatadik": "seed-2",
+    "srv-infogtk": "seed-19",
+    "srv-pip": "seed-15"
+  };
+
+  targetServerEndpoints.forEach(srv => {
+    const targetLinkId = mapping[srv.id];
+    if (targetLinkId) {
+      const matchedLink = linksData.find(l => l.id === targetLinkId);
+      if (matchedLink && matchedLink.url) {
+        srv.url = matchedLink.url; // Gunakan URL terbaru dari linksData
+      }
+    }
+  });
 }
 
 function initPingWorkspace() {
-  updateDynamicRaporEndpoint();
+  syncPingEndpointsWithLinks();
   renderPingGridPlaceholder();
   pingAllEndpoints();
   
@@ -177,20 +195,18 @@ function toggleAutoPing() {
   }
 }
 
-// MEMPERBAIKI KELAS TOMBOL DINAMIS SUPAYA TIDAK OVERFLOW/KELUAR BOX DI LAYAR HP
 function updateAutoPingUI(isActive) {
   const btn = document.getElementById('btn-toggle-autoping');
   const icon = document.getElementById('icon-autoping');
   const text = document.getElementById('text-autoping');
   if (!btn || !icon || !text) return;
 
-  // px-2 py-1.5 (Sangat rapat di layar HP kecil) dan text-[10px] beralih ke px-4 py-2.5 & text-xs di tablet/PC (sm:)
   if (isActive) {
-    btn.className = "flex-1 sm:flex-none px-2 py-1.5 sm:px-4 sm:py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-[10px] sm:text-xs font-bold rounded-xl transition flex items-center justify-center gap-1 sm:gap-1.5 shadow-md truncate";
+    btn.className = "flex-1 sm:flex-none px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shadow-md";
     icon.className = "fa-solid fa-stop";
     text.textContent = "Hentikan Auto";
   } else {
-    btn.className = "flex-1 sm:flex-none px-2 py-1.5 sm:px-4 sm:py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-xs font-bold rounded-xl transition flex items-center justify-center gap-1 sm:gap-1.5 shadow-md truncate";
+    btn.className = "flex-1 sm:flex-none px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 shadow-md";
     icon.className = "fa-solid fa-play animate-pulse";
     text.textContent = "Aktifkan Auto";
   }
