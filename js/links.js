@@ -22,11 +22,11 @@ const defaultSeedLinks = [
   { "id": "seed-11", "title": "Verval PD (Peserta Didik)", "url": "https://vervalpd.data.kemendikdasmen.go.id/", "desc": "Penerbitan dan perbaikan NISN, pengesahan NIK siswa terintegrasi langsung dengan database Dukcapil.", "category": "verval", "icon": "fa-id-card", "system": true },
   { "id": "seed-12", "title": "Verval SP (Satuan Pendidikan)", "url": "https://vervalsp.data.kemendikdasmen.go.id/verval/index.php/cberanda/index/", "desc": "Pengelolaan profil dan spasial koordinat wilayah Satuan Pendidikan Anda.", "category": "verval", "icon": "fa-globe", "system": true },
   { "id": "seed-14", "title": "Pusdatin PD (Pusat Data Peserta Didik)", "url": "https://sdm.data.kemendikdasmen.go.id/", "desc": "Akses sinkronisasi residu data kependudukan peserta didik, perbaikan tingkat ganda, dan kelulusan.", "category": "verval", "icon": "fa-id-card", "system": true },
-  { "id": "seed-15", "title": "Sipintar PIP (Program Indonesia Pintar)", "url": "https://pip.kemendikdasmen.go.id/home_v1", "desc": "Pemantauan penyaluran beasiswa PIP, pengajuan usulan baru, dan unduh SK NOMINASI/pemberian.", "category": "keuangan", "icon": "fa-wallet", "system": true },
+  { "id": "seed-15", "title": "Sipintar PIP (Program Indonesia Pintar)", "url": "https://pip.kemendikdasmen.go.id/home_v1", "desc": "Pemantauan penyaluran beasiswa PIP, pengajuan usulan baru, and unduh SK NOMINASI/pemberian.", "category": "keuangan", "icon": "fa-wallet", "system": true },
   { "id": "seed-16", "title": "ARKAS Kemendikdasmen", "url": "https://arkas.kemendikdasmen.go.id", "desc": "Aplikasi Rencana Kegiatan dan Anggaran Sekolah untuk penyusunan dan pelaporan dana BOSP.", "category": "keuangan", "icon": "fa-wallet", "system": true },
   { "id": "seed-17", "title": "SIPLah", "url": "https://siplah.blibli.com/", "desc": "Sistem Informasi Pengadaan Sekolah untuk pembelanjaan barang dan jasa dana BOSP.", "category": "keuangan", "icon": "fa-cart-shopping", "system": true },
   { "id": "seed-18", "title": "BOSP Salur", "url": "https://bosp.kemendikdasmen.go.id", "desc": "Pemantauan penyaluran dan konfirmasi laporan penggunaan dana BOSP Reguler & Kinerja.", "category": "keuangan", "icon": "fa-wallet", "system": true },
-  { "id": "seed-coretax", "title": "Coretax DJP Pajak", "url": "https://coretaxdjp.pajak.go.id/identityproviderportal/Account/Login", "desc": "Portal terintegrasi sistem perpajakan masa depan DJP (Coretax System).", "category": "keuangan", "icon": "fa-receipt", "system": true },
+  { "id": "seed-coretax", "title": "Coretax DJP Pajak", "url": "https://coretaxdjp.pajak.go.id/identityproviderportal/Account/Login", "desc": "Portal terintegrasi sistem administrasi perpajakan masa depan DJP (Coretax System) bagi wajib pajak.", "category": "keuangan", "icon": "fa-receipt", "system": true },
   { "id": "seed-19", "title": "Info GTK", "url": "https://info.gtk.kemendikdasmen.go.id/", "desc": "Pengecekan keaktifan mengajar mandiri, validitas data beban mengajar (JJM), dan keaktifan sertifikasi SKTP.", "category": "guru", "icon": "fa-chalkboard-user", "system": true },
   { "id": "seed-20", "title": "SIMPKB Login", "url": "https://paspor-gtk.simpkb.id/casgpo/login?service=https%3A%2F%2Fapp.simpkb.id%2Fauth%2Flogin", "desc": "Sistem Informasi Manajemen Pengembangan Keprofesian Berkelanjutan (PPG, Diklat, dan KKG/MGMP).", "category": "guru", "icon": "fa-chalkboard-user", "system": true },
   { "id": "seed-21", "title": "Ruang GTK", "url": "https://akun.pendidikan.go.id/login?flow=fa87d033-975e-48c1-8315-b75b0be1dfb2", "desc": "Layanan bagi guru untuk pelatihan mandiri, pengisian e-Kinerja (SKP), dan penyusunan modul ajar.", "category": "guru", "icon": "fa-chalkboard-user", "system": true },
@@ -93,7 +93,7 @@ function deleteCustomLink(id) {
 function resetToDefaultLinks() {
   if (typeof showCustomConfirm === 'function') {
     showCustomConfirm("Reset Portal?", "Semua tautan kustom Anda akan terhapus dan kembali ke setelan pabrik.", () => {
-      // Dikembalikan ke data/default-links.json sesuai dengan struktur direktori proyek Anda
+      // Dikembangkan ke data/default-links.json sesuai dengan struktur direktori proyek Anda
       fetch('data/default-links.json')
         .then(res => res.json())
         .then(data => {
