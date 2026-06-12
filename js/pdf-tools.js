@@ -618,9 +618,11 @@ async function processPdfToWord() {
     }
     
     // Integrasi XML asli Microsoft Word Office Standard HTML Wrapper dengan dynamic footer page numbers
+    // Perbaikan: Menambahkan meta charset UTF-8 agar Word mendeteksi karakter khusus secara sempurna tanpa glitch
     const blobHtml = `
       <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
       <head>
+        <meta charset="UTF-8">
         <title>Ekstraksi Dokumen DAPO-HUB</title>
         <!--[if gte mso 9]>
         <xml>
