@@ -154,7 +154,7 @@
           <div class="bg-white dark:bg-slate-800 p-4 rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-md relative z-30">
             <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-1.5"><i class="fa-solid fa-layer-group text-blue-500"></i> Kategori</h3>
             <nav class="flex lg:flex-col overflow-x-auto no-scrollbar gap-2 lg:gap-1.5" id="category-tabs">
-              <!-- SINKRONISASI SEMUA KATALOG DENGAN IKON DESAIN BARU -->
+              <!-- SINKRONISASI SEMUA KATALOG -->
               <button onclick="selectCategory('semua')" data-category="semua" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-blue-600 text-white shadow-md transition-all">
                 <span class="flex items-center gap-1.5"><i class="fa-solid fa-border-all text-blue-300"></i> Semua Katalog</span>
                 <span id="badge-semua" class="ml-1.5 bg-white/20 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span>
@@ -184,6 +184,17 @@
                 <span class="flex items-center gap-1.5"><i class="fa-solid fa-id-card-clip text-sky-500"></i> Kepegawaian ASN</span>
                 <span id="badge-kepegawaian" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span>
               </button>
+
+              <!-- PEMINDAHAN KATEGORI: Asesmen dan Portal Daerah diposisikan di atas Ruang Kerja PDF -->
+              <button onclick="selectCategory('portal_tka')" data-category="portal_tka" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200 transition-all">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-laptop-code text-rose-500"></i> Asesmen</span> 
+                <span id="badge-portal_tka" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span>
+              </button>
+              
+              <button onclick="selectCategory('daerah')" data-category="daerah" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200 transition-all">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-city text-purple-500"></i> Portal Daerah</span> 
+                <span id="badge-daerah" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span>
+              </button>
               
               <!-- Tab Menu: Peralatan PDF -->
               <button onclick="selectCategory('pdf_tools')" data-category="pdf_tools" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200 transition-all">
@@ -203,20 +214,15 @@
                 <span id="badge-speedtest" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">1</span>
               </button>
 
+              <!-- PEMINDAHAN: Siaran WhatsApp sekarang diposisikan sebagai menu kategori utama -->
+              <button onclick="selectCategory('whatsapp')" data-category="whatsapp" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200 transition-all">
+                <span class="flex items-center gap-1.5"><i class="fa-brands fa-whatsapp text-emerald-500"></i> Siaran WhatsApp</span> 
+                <span id="badge-whatsapp" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span>
+              </button>
+
               <button onclick="selectCategory('2fa_auth')" data-category="2fa_auth" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200 transition-all">
                 <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-blue-500"></i> Kunci Keamanan</span>
                 <span id="badge-2fa_auth" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span>
-              </button>
-              
-              <!-- Portal TKA -->
-              <button onclick="selectCategory('portal_tka')" data-category="portal_tka" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200 transition-all">
-                <span class="flex items-center gap-1.5"><i class="fa-solid fa-laptop-code text-rose-500"></i> Portal TKA</span> 
-                <span id="badge-portal_tka" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span>
-              </button>
-              
-              <button onclick="selectCategory('daerah')" data-category="daerah" class="category-tab inline-flex lg:flex items-center justify-between w-auto lg:w-full px-4 py-2.5 text-xs font-bold rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 hover:bg-slate-200 transition-all">
-                <span class="flex items-center gap-1.5"><i class="fa-solid fa-city text-purple-500"></i> Portal Daerah</span> 
-                <span id="badge-daerah" class="ml-1.5 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">0</span>
               </button>
             </nav>
           </div>
@@ -275,6 +281,37 @@
               </button>
             </div>
           </div>
+
+          <!-- PANEL SIARAN WHATSAPP BROADCAST (KOLOM TENGAH BARU) -->
+          <article id="panel-whatsapp-wrapper" class="hidden space-y-6 animate-fade-in">
+            <div class="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-md space-y-6">
+              <header class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-700">
+                <h3 class="font-space font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                  <i class="fa-brands fa-whatsapp text-emerald-500 text-xl animate-pulse"></i> Ruang Kerja Siaran WhatsApp
+                </h3>
+                <button onclick="openTemplatesModal()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-bold flex items-center gap-1">
+                  <i class="fa-solid fa-gear"></i> Kelola Template
+                </button>
+              </header>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-[10px] font-black uppercase text-slate-400 mb-1.5">Nama Lengkap Pendidik / Penerima</label>
+                  <input type="text" id="wa-recipient-name" placeholder="Contoh: Ibu Siti Aminah, S.Pd." class="w-full text-xs sm:text-sm p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none focus:ring-1 focus:ring-blue-500" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-black uppercase text-slate-400 mb-1.5">Pilih Template Pesan Siaran</label>
+                  <select id="wa-template-select" class="w-full text-xs sm:text-sm p-3 rounded-xl border bg-white dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none font-bold cursor-pointer focus:ring-1 focus:ring-blue-500"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                  <button onclick="copyBroadcastMessage()" class="py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-650 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-copy"></i> Salin Pesan</button>
+                  <button onclick="sendBroadcastWhatsApp()" class="py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"><i class="fa-brands fa-whatsapp"></i> Kirim WhatsApp</button>
+                </div>
+              </div>
+              <footer class="pt-3 border-t border-slate-100 dark:border-slate-700/60 text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-blue-500"></i> Variabel {nama} pada template siaran akan digantikan secara otomatis berdasarkan input nama penerima di atas.</span>
+              </footer>
+            </div>
+          </article>
 
           <!-- PANEL 2FA AUTHENTICATOR -->
           <article id="panel-2fa-main-auth" class="hidden space-y-6">
@@ -729,26 +766,12 @@
               <h4 class="font-bold text-xs flex items-center gap-1.5 text-slate-900 dark:text-white"><i class="fa-solid fa-screwdriver-wrench text-blue-500"></i> Peralatan IT</h4>
             </header>
             
-            <!-- WhatsApp Broadcast -->
-            <div class="bg-slate-50 dark:bg-slate-900/30 p-3 rounded-2xl border border-slate-200/50 space-y-2.5">
-               <div class="flex justify-between items-center"><h5 class="text-[11px] font-bold flex items-center gap-1.5"><i class="fa-brands fa-whatsapp text-emerald-500"></i> Siaran WhatsApp</h5><button onclick="openTemplatesModal()" class="text-[9px] text-blue-600 hover:underline font-bold">KELOLA</button></div>
-               <input type="text" id="wa-recipient-name" placeholder="Nama Lengkap Pendidik" class="w-full text-[10px] p-2 rounded-xl border bg-white dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none focus:ring-1 focus:ring-blue-500" />
-               <select id="wa-template-select" class="w-full text-[10px] p-2 rounded-xl border bg-white dark:bg-slate-900 dark:text-white dark:border-slate-700 outline-none font-bold cursor-pointer focus:ring-1 focus:ring-blue-500"></select>
-               <div class="flex gap-2"><button onclick="copyBroadcastMessage()" class="flex-1 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border rounded-xl text-[10px] font-bold"><i class="fa-solid fa-copy"></i> Salin</button><button onclick="sendBroadcastWhatsApp()" class="flex-1 py-1.5 bg-emerald-600 text-white rounded-xl text-[10px] font-bold"><i class="fa-brands fa-whatsapp"></i> Kirim</button></div>
-            </div>
-            
-            <!-- Password Generator -->
-            <div class="bg-slate-50 dark:bg-slate-900/30 p-3 rounded-2xl border border-slate-200/50 space-y-2.5">
-               <h5 class="text-[11px] font-bold flex items-center gap-1.5"><i class="fa-solid fa-key text-amber-500"></i> Pembuat Sandi</h5>
-               <div class="flex gap-2"><input type="text" id="generated-password-input" readonly placeholder="Klik acak..." onclick="copyGeneratedPassword()" class="flex-1 text-[10px] p-2 rounded-xl border dark:bg-slate-800 dark:text-white dark:border-slate-700 font-mono cursor-pointer outline-none" /><button onclick="generateSecurePassword()" class="bg-amber-500 hover:bg-amber-600 text-white text-[10px] px-3 font-bold rounded-xl transition"><i class="fa-solid fa-rotate"></i></button></div>
-            </div>
-
-            <!-- PWA Deployment -->
-            <div class="bg-blue-50/70 dark:bg-blue-950/20 p-3 rounded-2xl border border-blue-200/50 dark:border-blue-800/40 space-y-2.5">
+            <!-- PWA Deployment (Siaran WA dan Pembuat Sandi sudah dibersihkan dari panel asisten ini) -->
+            <div class="bg-blue-50/70 dark:bg-blue-950/20 p-3.5 rounded-2xl border border-blue-200/50 dark:border-blue-800/40 space-y-2.5">
               <h5 class="text-[11px] font-black text-blue-700 dark:text-blue-400 flex items-center gap-1.5">
                 <i class="fa-solid fa-circle-nodes text-blue-500"></i> Layanan Luring PWA
               </h5>
-              <p class="text-[9px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p class="text-[9px] text-slate-505 dark:text-slate-400 leading-relaxed">
                 Unduh paket berikut untuk meletakkan file pendukung luring.
               </p>
               <div class="grid grid-cols-2 gap-2">
