@@ -9,7 +9,6 @@ var CONFIG = {
   SCHOOL_CODE_ABBR: "SPENTIG", 
   NPSN: "40312436",
   OPERATOR_NAME: "Rahmat Rahim",
-  RAPOR_URL: "https://rapor.smpn3mks.sch.id",
   CUTOFF_DATE: "August 31, 2026 23:59:59",
   CUTOFF_TITLE: "Batas Akhir Pemutakhiran Dapodik 2026",
   CUTOFF_DESC: "Batas waktu sinkronisasi data profil sekolah dan peserta didik untuk perhitungan dana BOS.",
@@ -72,7 +71,7 @@ function applyConfigToDOM() {
   }
 }
 
-// Sistem Pengaturan PIN Mandiri saat Pertama Kali booting atau Pengunduhan PIN
+// Sistem Pengaturan PIN Mandiri saat Pertama Kali booting atau Pengunduhan PIN (Disederhanakan & DRY)
 function handlePinSubmit() {
   const pinInput = document.getElementById('pin-input-field');
   if (!pinInput) return;
@@ -85,39 +84,28 @@ function handlePinSubmit() {
 
   try {
     const storedHash = localStorage.getItem(CONFIG.STORAGE_PREFIX + 'master-pin');
+    const pinHash = CryptoJS.SHA256(enteredPin).toString();
 
     if (!storedHash) {
-      const pinHash = CryptoJS.SHA256(enteredPin).toString();
       localStorage.setItem(CONFIG.STORAGE_PREFIX + 'master-pin', pinHash);
-      
-      // Amankan sesi aktif sementara ke sessionStorage agar tahan saat halaman direfresh
-      sessionStorage.setItem(CONFIG.STORAGE_PREFIX + 'session-pin', enteredPin);
-      sessionStorage.setItem(CONFIG.STORAGE_PREFIX + 'session-hash', pinHash);
-      sessionStorage.setItem(CONFIG.STORAGE_PREFIX + 'last-active', Date.now().toString());
-      sessionStorage.removeItem(CONFIG.STORAGE_PREFIX + 'session-locked');
-
-      globalMasterPin = enteredPin;
-      CONFIG.SECURE_PASS_KEY = "key-" + pinHash;
       showToast("Master PIN berhasil didaftarkan!", "success");
-      bootstrapApplication();
+    } else if (storedHash !== pinHash) {
+      showToast("Master PIN Salah!", "error");
+      pinInput.value = "";
+      return;
     } else {
-      const pinHash = CryptoJS.SHA256(enteredPin).toString();
-      if (storedHash === pinHash) {
-        // Amankan sesi aktif sementara ke sessionStorage agar tahan saat halaman direfresh
-        sessionStorage.setItem(CONFIG.STORAGE_PREFIX + 'session-pin', enteredPin);
-        sessionStorage.setItem(CONFIG.STORAGE_PREFIX + 'session-hash', pinHash);
-        sessionStorage.setItem(CONFIG.STORAGE_PREFIX + 'last-active', Date.now().toString());
-        sessionStorage.removeItem(CONFIG.STORAGE_PREFIX + 'session-locked');
-
-        globalMasterPin = enteredPin;
-        CONFIG.SECURE_PASS_KEY = "key-" + pinHash;
-        showToast("Sesi kerja berhasil dibuka!", "success");
-        bootstrapApplication();
-      } else {
-        showToast("Master PIN Salah!", "error");
-        pinInput.value = "";
-      }
+      showToast("Sesi kerja berhasil dibuka!", "success");
     }
+
+    // Amankan sesi aktif sementara ke sessionStorage agar tahan saat halaman direfresh
+    sessionStorage.setItem(CONFIG.STORAGE_PREFIX + 'session-pin', enteredPin);
+    sessionStorage.setItem(CONFIG.STORAGE_PREFIX + 'session-hash', pinHash);
+    sessionStorage.setItem(CONFIG.STORAGE_PREFIX + 'last-active', Date.now().toString());
+    sessionStorage.removeItem(CONFIG.STORAGE_PREFIX + 'session-locked');
+
+    globalMasterPin = enteredPin;
+    CONFIG.SECURE_PASS_KEY = "key-" + pinHash;
+    bootstrapApplication();
   } catch (error) {
     console.error("Gagal memproses otentikasi PIN:", error);
     showToast("Terjadi kesalahan sistem pengamanan.", "error");
@@ -135,23 +123,46 @@ function bootstrapApplication() {
     linksData = null;
   }
 
+  // Fungsi pembantu untuk normalisasi kategori link secara lokal
+  const runLinksMigration = (links) => {
+    let hasChanges = false;
+    if (links && Array.isArray(links)) {
+      links.forEach(l => {
+        if (l.category === 'ujian') {
+          l.category = 'portal_tka';
+          hasChanges = true;
+        }
+      });
+    }
+    return hasChanges;
+  };
+
   if (!linksData || linksData.length === 0) {
     linksData = typeof defaultSeedLinks !== 'undefined' ? [...defaultSeedLinks] : [];
     
-    // Dikembalikan ke data/default-links.json sesuai dengan struktur direktori proyek Anda
+    // Dikembangkan ke data/default-links.json sesuai dengan struktur direktori proyek Anda
     fetch('data/default-links.json')
       .then(res => res.json())
       .then(data => {
         if (data && data.length > 0) {
           linksData = data;
+          runLinksMigration(linksData); // Normalisasi saat data eksternal berhasil dimuat
           saveLinks();
           renderDynamicLinks();
         }
       })
       .catch(() => {
+        runLinksMigration(linksData); // Normalisasi saat fallback seed default dijalankan
         saveLinks();
         renderDynamicLinks();
       });
+  } else {
+    // NORMALISASI & MIGRASI DATA SEKALI JALAN:
+    // Jika data dibaca dari LocalStorage, lakukan migrasi di sini dan langsung simpan permanen ke LocalStorage
+    const needsMigrationSave = runLinksMigration(linksData);
+    if (needsMigrationSave) {
+      saveLinks();
+    }
   }
 
   agendaData = secureRead(CONFIG.STORAGE_PREFIX + 'agendas') || [
