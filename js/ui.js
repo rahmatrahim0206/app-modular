@@ -81,12 +81,7 @@ window.renderDynamicLinks = function() {
     linksData = typeof defaultSeedLinks !== 'undefined' ? [...defaultSeedLinks] : [];
   }
 
-  // NORMALISASI & MIGRASI DATA: Mengubah kategori lama 'ujian' ke kategori baru 'portal_tka' secara real-time
-  linksData.forEach(l => {
-    if (l.category === 'ujian') {
-      l.category = 'portal_tka';
-    }
-  });
+  // LOGIKA MIGRASI KATEGORI LAMA 'ujian' TELAH DIHAPUS DARI SINI KARENA SUDAH DIOPTIMASI DI js/app.js (BOOTSTRAP)
 
   linksData.forEach(l => {
     if (l.title.toLowerCase().includes(q) || l.desc.toLowerCase().includes(q)) {
@@ -122,6 +117,7 @@ window.renderDynamicLinks = function() {
         a.rel = "noopener";
         a.className = 'block p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 hover:border-blue-500 hover:shadow-lg transition-all group relative';
         const delBtn = !l.system ? `<button onclick="event.preventDefault(); event.stopPropagation(); deleteCustomLink('${l.id}')" class="absolute top-4 right-4 text-slate-300 hover:text-red-500 transition z-20 p-1"><i class="fa-solid fa-trash text-xs"></i></button>` : '';
+        // Perbaikan typo kelas text-slate-505 ke kelas standar text-slate-500 dark:text-slate-400
         a.innerHTML = `${delBtn}
           <div class="flex items-start gap-3 sm:gap-4">
             <div class="p-2.5 sm:p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 group-hover:scale-110 transition flex-shrink-0"><i class="fa-solid ${l.icon || 'fa-globe'} text-lg sm:text-xl"></i></div>
@@ -186,6 +182,7 @@ window.selectCategory = function(cat) {
       pWa.classList.remove('hidden');
       if (typeof populateWaSelect === 'function') populateWaSelect();
     } else {
+      pLinks.className = "space-y-6";
       pLinks.classList.remove('hidden');
     }
   }
