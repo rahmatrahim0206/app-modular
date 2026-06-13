@@ -158,7 +158,6 @@ function bootstrapApplication() {
       });
   } else {
     // NORMALISASI & MIGRASI DATA SEKALI JALAN:
-    // Jika data dibaca dari LocalStorage, lakukan migrasi di sini dan langsung simpan permanen ke LocalStorage
     const needsMigrationSave = runLinksMigration(linksData);
     if (needsMigrationSave) {
       saveLinks();
@@ -176,7 +175,24 @@ function bootstrapApplication() {
     { id: '2fa-seed-myasn', label: 'MyASN BKN (Contoh)', user: 'admin@bkn.go.id', key: 'JBSWY3DPEHPK3PXP' }
   ];
   
-  waTemplates = secureRead(CONFIG.STORAGE_PREFIX + 'wa-templates') || [...defaultWaTemplates];
+  // LOGIKA SMART MERGE TEMPLATE WHATSAPP:
+  // Menggabungkan template default baru jika pengguna telah memiliki template lain di penyimpanan lokal
+  const storedTemplates = secureRead(CONFIG.STORAGE_PREFIX + 'wa-templates');
+  if (storedTemplates && Array.isArray(storedTemplates)) {
+    let wasModified = false;
+    defaultWaTemplates.forEach(dt => {
+      if (!storedTemplates.some(t => t.id === dt.id)) {
+        storedTemplates.push(dt);
+        wasModified = true;
+      }
+    });
+    if (wasModified) {
+      secureSave(CONFIG.STORAGE_PREFIX + 'wa-templates', storedTemplates);
+    }
+    waTemplates = storedTemplates;
+  } else {
+    waTemplates = [...defaultWaTemplates];
+  }
 
   renderAll();
   if (typeof initCalendar === 'function') initCalendar();
