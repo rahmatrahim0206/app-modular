@@ -421,7 +421,7 @@ function toggleQrScanner() {
   const bText = document.getElementById('text-btn-scan');
   if (isScanning) {
     if (wrp) wrp.classList.add('hidden');
-    if (bText) bText.textContent = "Scan Kamera";
+    if (bText) bText.textContent = "Pindai Kamera";
     isScanning = false;
     if (qrScannerObj) {
       qrScannerObj.stop().catch(() => {});
