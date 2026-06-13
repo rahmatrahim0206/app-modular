@@ -143,6 +143,18 @@ function setCompressionLevel(level) {
   }
 }
 
+// Helper untuk konversi Data URL ke biner lokal secara 100% offline tanpa fetch (Anti-CSP Block)
+function dataUrlToUint8Array(dataUrl) {
+  const parts = dataUrl.split(',');
+  const byteString = atob(parts[1]);
+  const arrayBuffer = new ArrayBuffer(byteString.length);
+  const uint8Array = new Uint8Array(arrayBuffer);
+  for (let i = 0; i < byteString.length; i++) {
+    uint8Array[i] = byteString.charCodeAt(i);
+  }
+  return uint8Array;
+}
+
 // Proses Kompresi PDF Menggunakan pdf.js (Renders to Canvas) dan pdf-lib (Re-embeds JPEGs)
 async function processPdfCompression() {
   if (!selectedCompressFile) {
@@ -195,7 +207,7 @@ async function processPdfCompression() {
 
       // Konversi hasil render kanvas menjadi biner gambar JPEG terkompresi
       const jpegDataUrl = canvas.toDataURL('image/jpeg', jpegQuality);
-      const jpegBytes = await fetch(jpegDataUrl).then(res => res.arrayBuffer());
+      const jpegBytes = dataUrlToUint8Array(jpegDataUrl); // Diperbaiki: Konversi aman dan luring penuh
 
       // Sematkan gambar terkompresi ke dalam dokumen pdf-lib yang baru
       const embeddedImage = await compressedPdfDoc.embedJpg(jpegBytes);
@@ -211,7 +223,8 @@ async function processPdfCompression() {
     }
 
     const compressedBytes = await compressedPdfDoc.save();
-    const cleanName = selectedCompressFile.name.replace(".pdf", "_terkompresi.pdf");
+    // Diperbaiki: Menggunakan ekspresi reguler case-insensitive untuk ekstensi .pdf/.PDF
+    const cleanName = selectedCompressFile.name.replace(/\.pdf$/i, "_terkompresi.pdf");
     
     // Eksekusi download langsung
     triggerBlobDownload(compressedBytes, cleanName, "application/pdf");
@@ -305,7 +318,8 @@ function handleSplitFileSelect(e) {
   if (isPdf) {
     selectedSplitFile = file;
     document.getElementById('pdf-split-filename').innerHTML = `<i class="fa-solid fa-file-pdf text-rose-500 mr-1.5"></i>${file.name}`;
-    document.getElementById('pdf-split-name').value = file.name.replace(".pdf", "_bagian.pdf");
+    // Diperbaiki: Menggunakan ekspresi reguler case-insensitive untuk ekstensi .pdf/.PDF
+    document.getElementById('pdf-split-name').value = file.name.replace(/\.pdf$/i, "_bagian.pdf");
     if (typeof showToast === 'function') showToast("File PDF berhasil dimuat!", "success");
   } else {
     if (typeof showToast === 'function') showToast("Harap pilih berkas dengan format PDF!", "error");
@@ -345,7 +359,7 @@ async function processPdfSplit() {
     
     const splitBytes = await splitDoc.save();
     let outName = document.getElementById('pdf-split-name').value.trim() || "ekstrak_halaman.pdf";
-    if (!outName.endsWith(".pdf")) outName += ".pdf";
+    if (!outName.toLowerCase().endsWith(".pdf")) outName += ".pdf";
     
     triggerBlobDownload(splitBytes, outName, "application/pdf");
     if (typeof showToast === 'function') showToast("Halaman berhasil diekstrak!", "success");
@@ -363,9 +377,12 @@ function parsePageRanges(text, maxPages) {
     part = part.trim();
     if (part.includes('-')) {
       const range = part.split('-');
-      const start = parseInt(range[0]);
-      const end = parseInt(range[1]);
-      if (!isNaN(start) && !isNaN(end)) {
+      // Diperbaiki: Memastikan 'start' dan 'end' aman terhadap penulisan terbalik (misal: 10-5)
+      const val1 = parseInt(range[0]);
+      const val2 = parseInt(range[1]);
+      if (!isNaN(val1) && !isNaN(val2)) {
+        const start = Math.min(val1, val2);
+        const end = Math.max(val1, val2);
         for (let i = start; i <= end; i++) {
           if (i > 0 && i <= maxPages) pages.push(i);
         }
@@ -529,7 +546,7 @@ async function processTextToPdf() {
     
     const pdfBytes = await pdfDoc.save();
     let filename = document.getElementById('pdf-text-filename').value.trim() || "dokumen_teks.pdf";
-    if (!filename.endsWith(".pdf")) filename += ".pdf";
+    if (!filename.toLowerCase().endsWith(".pdf")) filename += ".pdf";
     
     triggerBlobDownload(pdfBytes, filename, "application/pdf");
     if (typeof showToast === 'function') showToast("PDF dari naskah teks berhasil diunduh!", "success");
@@ -685,7 +702,8 @@ async function processPdfToWord() {
     `;
     
     const docBytes = new TextEncoder().encode(blobHtml);
-    const outName = selectedWordFile.name.replace(".pdf", "_ekstrak.doc");
+    // Diperbaiki: Menggunakan ekspresi reguler case-insensitive untuk penggantian ekstensi .pdf/.PDF
+    const outName = selectedWordFile.name.replace(/\.pdf$/i, "_ekstrak.doc");
     triggerBlobDownload(docBytes, outName, "application/msword");
     if (typeof showToast === 'function') showToast("Berkas Word (.doc) berhasil diunduh!", "success");
     resetPdfWorkspaces();
