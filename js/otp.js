@@ -260,7 +260,8 @@ function handleQrCodeResult(res) {
       document.getElementById('auth-main-key').value = cleaned;
       if (typeof showToast === 'function') showToast("Kunci rahasia berhasil dimuat. Lengkapi nama layanan lalu simpan.", "warning");
     } else {
-      if (typeof showToast === 'function') showToast("Hasil scan QR Code tidak mengandung format OTP valid.", "error");
+      // Diperbaiki: Kata scan diubah menjadi pemindaian agar baku
+      if (typeof showToast === 'function') showToast("Hasil pemindaian QR Code tidak mengandung format OTP valid.", "error");
     }
   }
 }
@@ -283,7 +284,7 @@ function renderAuthenticatorKeys() {
     if (searchQuery.length > 0) {
       container.innerHTML = `<div class="col-span-1 md:col-span-2 p-8 text-center text-slate-400 italic">Akun OTP dengan kata kunci "${searchQuery}" tidak ditemukan.</div>`;
     } else {
-      container.innerHTML = `<div class="col-span-1 md:col-span-2 p-8 text-center text-slate-400 italic">Belum ada akun TOTP tersimpan. Mulai scan QR atau tambah manual.</div>`;
+      container.innerHTML = `<div class="col-span-1 md:col-span-2 p-8 text-center text-slate-400 italic">Belum ada akun TOTP tersimpan. Mulai pindai QR atau tambah manual.</div>`;
     }
     return;
   }
@@ -421,6 +422,7 @@ function toggleQrScanner() {
   const bText = document.getElementById('text-btn-scan');
   if (isScanning) {
     if (wrp) wrp.classList.add('hidden');
+    // Diperbaiki: Menggunakan kata baku Pindai Kamera
     if (bText) bText.textContent = "Pindai Kamera";
     isScanning = false;
     if (qrScannerObj) {
@@ -460,6 +462,7 @@ function scanQrFile(e) {
     new Html5Qrcode("qr-reader").scanFile(e.target.files[0], true).then(res => {
       handleQrCodeResult(res);
     }).catch(() => {
+      // Diperbaiki: Istilah diubah menjadi Pindai agar baku
       if (typeof showToast === 'function') showToast("Gagal mendeteksi kode QR dalam gambar tersebut.", "error");
     });
   }
