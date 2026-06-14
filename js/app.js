@@ -54,7 +54,13 @@ function renderAll() {
 function applyConfigToDOM() {
   document.getElementById('view-school-header').textContent = CONFIG.SCHOOL_NAME_LONG;
   document.getElementById('view-operator-name').textContent = CONFIG.OPERATOR_NAME;
-  document.getElementById('view-school-badge').textContent = CONFIG.SCHOOL_CODE_ABBR;
+  
+  // FIX BUG 1: Menyelaraskan selector ke id="view-school-badge-pfp" sesuai dengan tag HTML di index.html
+  const badgeEl = document.getElementById('view-school-badge-pfp');
+  if (badgeEl) {
+    badgeEl.textContent = CONFIG.SCHOOL_CODE_ABBR;
+  }
+  
   document.getElementById('view-cutoff-title').innerHTML = `<i class="fa-solid fa-clock-rotate-left animate-pulse"></i> ${CONFIG.CUTOFF_TITLE}`;
   document.getElementById('view-cutoff-desc').textContent = CONFIG.CUTOFF_DESC;
   document.getElementById('view-cutoff-footer-target').textContent = CONFIG.CUTOFF_FOOTER_TEXT;
@@ -237,32 +243,29 @@ window.addEventListener('DOMContentLoaded', () => {
   const lastActiveTime = sessionStorage.getItem(CONFIG.STORAGE_PREFIX + 'last-active');
   const isLocked = sessionStorage.getItem(CONFIG.STORAGE_PREFIX + 'session-locked') === 'true';
 
+  // FIX BUG 4: Menata alur bypass login agar TIDAK melewatkan inisialisasi auto-lock interval & jam utama
+  let isBypassed = false;
   if (sessionPin && sessionHash && lastActiveTime) {
     const now = Date.now();
     const diffMinutes = (now - parseInt(lastActiveTime)) / 60000;
     
-    // Jika durasi idle sejak aktivitas terakhir masih di bawah batas, bypass login
     if (diffMinutes < CONFIG.IDLE_LIMIT_MINUTES) {
       globalMasterPin = sessionPin;
       CONFIG.SECURE_PASS_KEY = "key-" + sessionHash;
       bootstrapApplication();
       
-      // Jika refresh dilakukan saat layar sedang terkunci idle, tetap kunci layarnya
       if (isLocked) {
         if (typeof lockUserSession === 'function') lockUserSession();
       }
-      
-      // Lanjutkan interval jam
-      setInterval(updateClock, 1000);
-      return; // Selesai, lewati pemuatan input PIN awal
+      isBypassed = true;
     } else {
-      // Jika sudah kedaluwarsa, bersihkan sesi sementara
       sessionStorage.removeItem(CONFIG.STORAGE_PREFIX + 'session-pin');
       sessionStorage.removeItem(CONFIG.STORAGE_PREFIX + 'session-hash');
       sessionStorage.removeItem(CONFIG.STORAGE_PREFIX + 'session-locked');
     }
   }
 
+  // Daftarkan auto-lock interval dan clock secara global (Aman dari bypass)
   setInterval(() => {
     if (!sessionLocked && ++idleTimeCounter >= CONFIG.IDLE_LIMIT_MINUTES) lockUserSession();
   }, 60000);
