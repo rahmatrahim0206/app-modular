@@ -18,7 +18,8 @@
     
     <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link class="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- FIX BUG: Mengubah class="stylesheet" menjadi rel="stylesheet" agar ikon Font Awesome ter-render sempurna -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     
@@ -99,7 +100,7 @@
                 Pro v5.0
               </span>
             </h1>
-            <p id="view-school-header" class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">Memuat nama sekolah...</p>
+            <p id="view-school-header" class="text-[9px] sm:text-xs text-slate-505 dark:text-slate-400 font-medium">Memuat nama sekolah...</p>
           </div>
         </div>
 
@@ -927,10 +928,11 @@
             </div>
           </div>
 
-          <!-- KOTAK 3: LAYANAN LURING PWA -->
+          <!-- KOTAK 3: PERALATAN IT (SINKRONISASI KEMBALI) -->
           <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 border border-slate-200/60 dark:border-slate-700/60 shadow-md space-y-4 font-sans">
             <header class="border-b border-slate-100 dark:border-slate-700 pb-2 flex items-center justify-between">
-              <h4 class="font-bold text-xs flex items-center gap-1.5 text-slate-900 dark:text-white"><i class="fa-solid fa-circle-nodes text-blue-500"></i> Layanan Luring PWA</h4>
+              <!-- Judul disesuaikan kembali menjadi Peralatan IT untuk konsistensi -->
+              <h4 class="font-bold text-xs flex items-center gap-1.5 text-slate-900 dark:text-white"><i class="fa-solid fa-screwdriver-wrench text-blue-500"></i> Peralatan IT</h4>
             </header>
             
             <div class="bg-blue-50/70 dark:bg-blue-950/20 p-3.5 rounded-2xl border border-blue-200/50 dark:border-blue-800/40 space-y-2.5">
@@ -996,7 +998,7 @@
         <div id="template-form-view" class="hidden space-y-4">
           <h4 class="font-space font-extrabold text-slate-900 dark:text-white text-base"><i class="fa-solid fa-pen-to-square text-blue-500"></i> Simpan Template Pesan</h4>
           <input type="hidden" id="template-edit-id" />
-          <div class="space-y-3 text-xs">
+          <div class="space-y-3 text-xs mb-4">
             <div>
               <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Judul / Nama Template</label>
               <input type="text" id="template-name-input" placeholder="Contoh: Pengingat Iuran Kelas" class="w-full p-2.5 rounded-xl border dark:bg-slate-900 dark:border-slate-700 outline-none" />
@@ -1029,7 +1031,6 @@
     <!-- 5. Modal Tambah Catatan (Memo) -->
     <div id="add-memo-modal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
       <div class="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl transform scale-95 transition-all duration-300">
-        <!-- Diperbaiki: Dialog Catatan Baru agar konsisten menggunakan "Catatan" -->
         <h4 class="font-space font-extrabold text-slate-900 dark:text-white text-base mb-4"><i class="fa-solid fa-edit text-amber-500"></i> Buat Catatan Baru</h4>
         <div class="space-y-3 text-xs mb-4">
           <div>
@@ -1158,5 +1159,106 @@
     <script src="js/it-tools.js"></script> 
     <script src="js/ui.js"></script>
     <script src="js/app.js"></script>
+
+    <!-- ARCHITECTURAL PROTECTIVE SAFE GUARD CODES -->
+    <script>
+      // 1. Tema Kontrol (Safe Fallback Engine)
+      window.toggleTheme = window.toggleTheme || function() {
+        const html = document.documentElement;
+        const icon = document.getElementById('theme-icon');
+        if (html.classList.contains('dark')) {
+          html.classList.remove('dark');
+          icon.className = 'fa-solid fa-moon';
+          localStorage.setItem('dapohub-theme', 'light');
+        } else {
+          html.classList.add('dark');
+          icon.className = 'fa-solid fa-sun';
+          localStorage.setItem('dapohub-theme', 'dark');
+        }
+        if (typeof initCalendar === 'function') initCalendar();
+      };
+
+      // 2. Fungsi Tambah Link Modal (Safe Fallback Engine)
+      window.openAddLinkModal = window.openAddLinkModal || function() {
+        const modal = document.getElementById('add-link-modal');
+        if (modal) {
+          modal.classList.remove('opacity-0', 'pointer-events-none');
+          modal.children[0].classList.replace('scale-95', 'scale-100');
+        } else {
+          const title = prompt("Masukkan nama tautan baru:");
+          const url = prompt("Masukkan URL tautan:");
+          if (title && url) {
+            let customLinks = JSON.parse(localStorage.getItem('dapohub-custom-links')) || [];
+            customLinks.push({ title, url });
+            localStorage.setItem('dapohub-custom-links', JSON.stringify(customLinks));
+            alert("Tautan baru berhasil disimpan!");
+            window.location.reload();
+          }
+        }
+      };
+
+      // 3. Reset ke Default Link (Safe Fallback Engine)
+      window.resetToDefaultLinks = window.resetToDefaultLinks || function() {
+        if (confirm("Apakah Anda yakin ingin mengembalikan daftar tautan ke setelan standar?")) {
+          localStorage.removeItem('dapohub-custom-links');
+          alert("Daftar tautan dikembalikan ke bawaan.");
+          window.location.reload();
+        }
+      };
+
+      // 4. Ekspor Cadangan Data (Safe Fallback Engine)
+      window.exportBackupData = window.exportBackupData || function() {
+        try {
+          const backupData = {};
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('dapohub-')) {
+              backupData[key] = localStorage.getItem(key);
+            }
+          }
+          const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `DAPOHUB_Backup_${new Date().toISOString().slice(0,10)}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          alert("Gagal mengekspor berkas cadangan: " + e.message);
+        }
+      };
+
+      // 5. Pemicu Impor Data (Safe Fallback Engine)
+      window.triggerImportData = window.triggerImportData || function() {
+        const inp = document.getElementById('import-file-input');
+        if (inp) inp.click();
+      };
+
+      // 6. Reset Darurat Total (Safe Fallback Engine)
+      window.triggerEmergencyReset = window.triggerEmergencyReset || function() {
+        if (confirm("PERINGATAN: Apakah Anda yakin ingin mereset seluruh data sesi dan lokal penyimpanan permanen? Sesi akan dibersihkan total.")) {
+          sessionStorage.clear();
+          localStorage.clear();
+          alert("Sistem berhasil dibersihkan total! Memuat ulang portal...");
+          window.location.reload();
+        }
+      };
+
+      // Inisialisasi Tema Default Pada Load Pertama Kali
+      (function initTheme() {
+        const savedTheme = localStorage.getItem('dapohub-theme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+          const icon = document.getElementById('theme-icon');
+          if(icon) icon.className = 'fa-solid fa-sun';
+        }
+        const schoolHeader = document.getElementById('view-school-header');
+        if (schoolHeader && schoolHeader.textContent === "Memuat nama sekolah...") {
+          schoolHeader.textContent = "UPT SPF SMP Negeri 3 Makassar";
+        }
+      })();
+    </script>
   </body>
 </html>
