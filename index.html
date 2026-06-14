@@ -107,6 +107,7 @@
           <div class="hidden sm:flex flex-col items-end font-mono text-[10px] md:text-xs text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-800 pr-3 md:pr-4">
             <span id="header-date" class="font-medium text-slate-400">Memuat tanggal...</span>
             <span id="header-time" class="font-bold text-slate-700 dark:text-slate-200">WITA</span>
+            <!-- Skrip Jam Pemuatan Awal -->
             <script>
               (function() {
                 const dateEl = document.getElementById('header-date');
@@ -512,7 +513,7 @@
 
               <!-- SUB-TAB 3: WINDOWS CMD -->
               <div id="sub-it-cmd" class="hidden space-y-3">
-                <header class="text-xs text-slate-505 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border">
+                <header class="text-xs text-slate-555 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border">
                   Klik pada baris perintah cmd di bawah ini untuk menyalinnya secara instan ke papan klip komputer Anda.
                 </header>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="cmd-command-container"></div>
@@ -538,7 +539,7 @@
               </div>
 
               <!-- Catatan Kaki Keamanan -->
-              <footer class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 font-medium gap-2">
+              <footer class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row items-center justify-between text-[10px] text-slate-400 dark:text-slate-400 font-medium gap-2">
                 <span class="flex items-center gap-1"><i class="fa-solid fa-shield-halved text-emerald-500"></i> Seluruh pemrosesan utilitas IT berjalan 100% lokal di dalam peramban Anda.</span>
                 <span class="font-mono text-[9px]">DAPO-HUB IT Suite v5.0</span>
               </footer>
@@ -726,8 +727,8 @@
                       <i class="fa-solid fa-circle-question"></i>
                     </div>
                     <div>
-                      <h4 id="speedtest-integrity-title" class="text-xs font-extrabold text-slate-900 dark:text-white">Analisis Kelayakan Koneksi</h4>
-                      <p id="speedtest-integrity-desc" class="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed mt-1">Mulai uji kecepatan jaringan untuk mendeteksi kelayakan sinkronisasi Dapodik dan server ANBK sekolah.</p>
+                      <h4 id="speedtest-integrity-title" class="text-xs font-extrabold text-slate-900 dark:text-white">Analisis Kelayakan Jaringan</h4>
+                      <p id="speedtest-integrity-desc" class="text-[10px] text-slate-505 dark:text-slate-400 leading-relaxed mt-1">Mulai uji kecepatan jaringan untuk mendeteksi kelayakan sinkronisasi Dapodik dan server ANBK sekolah.</p>
                     </div>
                   </div>
                 </div>
@@ -869,7 +870,7 @@
           <i id="confirm-modal-icon" class="fa-solid fa-triangle-exclamation"></i>
           <h4 id="confirm-modal-title" class="font-space font-black text-slate-900 dark:text-white text-base">Konfirmasi</h4>
         </div>
-        <p id="confirm-modal-message" class="text-xs text-slate-500 dark:text-slate-300 leading-relaxed">Apakah Anda yakin ingin melakukan tindakan ini?</p>
+        <p id="confirm-modal-message" class="text-xs text-slate-505 dark:text-slate-300 leading-relaxed">Apakah Anda yakin ingin melakukan tindakan ini?</p>
         <div class="flex gap-2.5 mt-5">
           <button id="btn-confirm-cancel" onclick="closeCustomConfirm(false)" class="flex-1 py-2 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-650 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 transition">Batal</button>
           <button id="btn-confirm-ok" onclick="closeCustomConfirm(true)" class="flex-1 py-2 px-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black transition">Ya, Lanjutkan</button>
@@ -1017,7 +1018,7 @@
             <span id="pin-btn-text">Daftar PIN</span>
           </button>
         </div>
-        <p class="text-[9px] text-slate-505 font-medium">Seluruh enkripsi dilakukan 100% lokal pada peramban web browser Anda.</p>
+        <p class="text-[9px] text-slate-500 font-medium">Seluruh enkripsi dilakukan 100% lokal pada peramban web browser Anda.</p>
       </div>
     </div>
 
@@ -1194,10 +1195,12 @@
         setInterval(updateCountdown, 1000);
       };
 
-      // Inisialisasi Tema & Sinkronisasi Countdown Default Pada Load Pertama Kali
+      // Inisialisasi Tema & Sinkronisasi Countdown Default Pada Load Pertama Kali (DIUBAH AGAR TIDAK OTOMATIS MENGIKUTI OS)
       (function initTheme() {
         const savedTheme = localStorage.getItem('dapohub-theme');
-        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        // DIUBAH: Menghilangkan pemeriksaan preferensi OS (prefers-color-scheme)
+        // Sekarang, hanya mengaktifkan dark mode jika pengguna secara sadar menyalakannya sebelumnya
+        if (savedTheme === 'dark') {
           document.documentElement.classList.add('dark');
           const icon = document.getElementById('theme-icon');
           if(icon) icon.className = 'fa-solid fa-sun';
