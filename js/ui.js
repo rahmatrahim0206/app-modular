@@ -73,13 +73,22 @@ window.renderDynamicLinks = function() {
 
   const searchInput = document.getElementById('search-input');
   const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
-  let total = 0;
+  
+  // PEMBARUAN: Menghapus entri 'compress_foto' dari daftar perhitungan lencana
   let counts = { semua: 0, utama: 0, verval: 0, keuangan: 0, guru: 0, kepegawaian: 0, portal_tka: 0, daerah: 0, pdf_tools: 6, ping_tools: 6, speedtest: 1, "2fa_auth": 0, whatsapp: 0, it_tools: 4 };
 
   if (!linksData || !Array.isArray(linksData)) {
     linksData = typeof defaultSeedLinks !== 'undefined' ? [...defaultSeedLinks] : [];
   }
 
+  linksData.forEach(l => {
+    if (l.title.toLowerCase().includes(q) || l.desc.toLowerCase().includes(q)) {
+      counts[l.category] = (counts[l.category] || 0) + 1;
+      total++;
+    }
+  });
+  
+  let total = 0;
   linksData.forEach(l => {
     if (l.title.toLowerCase().includes(q) || l.desc.toLowerCase().includes(q)) {
       counts[l.category] = (counts[l.category] || 0) + 1;
@@ -133,7 +142,7 @@ window.renderDynamicLinks = function() {
   if (noRes) totalVis === 0 ? noRes.classList.remove('hidden') : noRes.classList.add('hidden');
 }
 
-// --- FUNGSI KLIK KATEGORI UTAMA ---
+// --- FUNGSI KLIK KATEGORI UTAMA (DIPERBAIKI UNTUK MENGHAPUS PANEL FOTO) ---
 window.selectCategory = function(cat) {
   activeCategory = cat;
   const p2Fa = document.getElementById('panel-2fa-main-auth');
@@ -423,9 +432,9 @@ window.showDateMemos = function(day, month, year) {
     let listHtml = `<div class="space-y-2"><p class="text-[10px] text-slate-500 font-black uppercase tracking-wide">📅 Catatan ${day} ${names[month]}:</p>`;
     filteredMemos.forEach(n => {
       listHtml += `
-        <div class="p-2 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 rounded-xl">
+        <div class="p-2 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 rounded-xl animate-fade-in">
           <h5 class="text-[10px] font-black text-amber-800 dark:text-amber-400">${n.title}</h5>
-          <p class="text-[9px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">${n.body}</p>
+          <p class="text-[9px] text-slate-505 dark:text-slate-400 mt-0.5 leading-relaxed">${n.body}</p>
         </div>
       `;
     });
@@ -455,7 +464,7 @@ window.renderQuickNotes = function() {
     h5.innerHTML = `<span>${n.title}</span> <span class="text-[8px] bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-slate-500">${dateFormatted}</span>`;
     
     const p = document.createElement('p');
-    p.className = 'text-[9px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3 mt-1';
+    p.className = 'text-[9px] text-slate-505 dark:text-slate-400 leading-relaxed line-clamp-3 mt-1';
     p.textContent = n.body;
     
     const btn = document.createElement('button');
@@ -710,9 +719,9 @@ window.startCutOffCountdown = function() {
   setInterval(updateCountdown, 1000);
 }
 
-// Diperbaiki: Menghapus spentig dari manifestJsonText demi konsistensi arsitektur kode
+// PEMBARUAN: Menghapus referensi 'compressor.js' dari aset PWA untuk mencegah kegagalan pemuatan saat offline
 const manifestJsonText = `{\n  "name": "DAPO-HUB Portal",\n  "short_name": "DAPO-HUB",\n  "description": "Portal Integrasi Operator Dapodik & IT",\n  "start_url": "index.html",\n  "display": "standalone",\n  "background_color": "#f8fafc",\n  "theme_color": "#2563eb",\n  "icons": [\n    {\n      "src": "https://cdn-icons-png.flaticon.com/512/2210/2210143.png",\n      "sizes": "512x512",\n      "type": "image/png"\n    }\n  ]\n}`;
 
 const serviceWorkerJsText = `
   const CACHE_NAME = 'dapohub-cache-v3';
-  const ASSETS_TO_CACHE = [\n    './',\n    './index.html',\n    './manifest.json',\n    './css/style.css',\n    './js/utils.js',\n    './js/storage.js',\n    './js/otp.js',\n    './js/links.js',\n    './js/pdf-tools.js',\n    './js/ping-tools.js',\n    './js/speedtest.js',\n    './js/it-tools.js',\n    './js/ui.js',\n    './js/app.js',\n    'https://cdn.tailwindcss.com',\n    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',\n    'https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js',\n    'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js',\n    'https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js',\n    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js'\n  ];\n  self.addEventListener('install', (e) => e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS_TO_CACHE))));\n  self.addEventListener('activate', (e) => e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))));\n  self.addEventListener('fetch', (e) => {\n    if (!e.request.url.startsWith('http')) return;\n    e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request).catch(() => caches.match('./index.html'))));\n  });\n`;
+  const ASSETS_TO_CACHE = [\\n    './',\\n    './index.html',\\n    './manifest.json',\\n    './css/style.css',\\n    './js/utils.js',\\n    './js/storage.js',\\n    './js/otp.js',\\n    './js/links.js',\\n    './js/pdf-tools.js',\\n    './js/ping-tools.js',\\n    './js/speedtest.js',\\n    './js/it-tools.js',\\n    './js/ui.js',\\n    './js/app.js',\\n    'https://cdn.tailwindcss.com',\\n    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',\\n    'https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js',\\n    'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js',\\n    'https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js',\\n    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js'\\n  ];\n  self.addEventListener('install', (e) => e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS_TO_CACHE))));\n  self.addEventListener('activate', (e) => e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))));\n  self.addEventListener('fetch', (e) => {\n    if (!e.request.url.startsWith('http')) return;\n    e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request).catch(() => caches.match('./index.html'))));\n  });\n`;
