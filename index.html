@@ -100,7 +100,8 @@
                 Pro v5.0
               </span>
             </h1>
-            <p id="view-school-header" class="text-[9px] sm:text-xs text-slate-505 dark:text-slate-400 font-medium">Memuat nama sekolah...</p>
+            <!-- Perbaikan kelas warna text-slate-505 ke kelas standar text-slate-500 -->
+            <p id="view-school-header" class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">Memuat nama sekolah...</p>
           </div>
         </div>
 
@@ -368,7 +369,7 @@
                 <h3 id="view-cutoff-title" class="font-space font-extrabold text-sm tracking-wide flex items-center gap-1.5 mt-3 mb-1 text-rose-600 dark:text-rose-400">
                   <i class="fa-solid fa-clock-rotate-left animate-pulse"></i> Memuat Judul...
                 </h3>
-                <p id="view-cutoff-desc" class="text-[10px] text-slate-505 dark:text-slate-400 font-medium leading-relaxed">Memuat rincian...</p>
+                <p id="view-cutoff-desc" class="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed">Memuat rincian...</p>
               </header>
               
               <!-- Real-time Countdown Grid -->
@@ -516,13 +517,13 @@
                   <h4 class="text-xs font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-search"></i> Periksa Status Propagasi Rekod DNS Domain</h4>
                   <div class="flex gap-2">
                     <input type="text" id="dns-domain-input" value="anbk.kemendikdasmen.go.id" class="flex-1 text-xs p-2.5 rounded-xl border dark:bg-slate-800 dark:text-white dark:border-slate-700 bg-white font-mono outline-none" />
-                    <button onclick="runDnsLookup()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition">Cek Domain</button>
+                    <input type="button" value="Cek Domain" onclick="runDnsLookup()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition cursor-pointer" />
                   </div>
                   <div class="flex flex-wrap gap-1.5">
-                    <button onclick="setDnsTemplate('anbk.kemendikdasmen.go.id')" class="text-[9px] bg-white dark:bg-slate-800 px-2 py-1 rounded border font-semibold">anbk.kemendikdasmen</button>
-                    <button onclick="setDnsTemplate('dapo.kemendikdasmen.go.id')" class="text-[9px] bg-white dark:bg-slate-800 px-2 py-1 rounded border font-semibold">dapo.kemendikdasmen</button>
-                    <button onclick="setDnsTemplate('sp.datadik.kemendikdasmen.go.id')" class="text-[9px] bg-white dark:bg-slate-800 px-2 py-1 rounded border font-semibold">sp.datadik</button>
-                    <button onclick="setDnsTemplate('info.gtk.kemendikdasmen.go.id')" class="text-[9px] bg-white dark:bg-slate-800 px-2 py-1 rounded border font-semibold">info.gtk</button>
+                    <button onclick="setDnsTemplate('anbk.kemendikdasmen.go.id')" class="text-[9px] bg-white dark:bg-slate-800 px-2 py-1 rounded border font-semibold font-mono">anbk.kemendikdasmen</button>
+                    <button onclick="setDnsTemplate('dapo.kemendikdasmen.go.id')" class="text-[9px] bg-white dark:bg-slate-800 px-2 py-1 rounded border font-semibold font-mono">dapo.kemendikdasmen</button>
+                    <button onclick="setDnsTemplate('sp.datadik.kemendikdasmen.go.id')" class="text-[9px] bg-white dark:bg-slate-800 px-2 py-1 rounded border font-semibold font-mono">sp.datadik</button>
+                    <button onclick="setDnsTemplate('info.gtk.kemendikdasmen.go.id')" class="text-[9px] bg-white dark:bg-slate-800 px-2 py-1 rounded border font-semibold font-mono">info.gtk</button>
                   </div>
                 </div>
 
@@ -536,7 +537,7 @@
 
               <!-- SUB-TAB 3: WINDOWS CMD -->
               <div id="sub-it-cmd" class="hidden space-y-3">
-                <header class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border">
+                <header class="text-xs text-slate-505 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border">
                   Klik pada baris perintah cmd di bawah ini untuk menyalinnya secara instan ke papan klip komputer Anda.
                 </header>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="cmd-command-container"></div>
@@ -674,7 +675,7 @@
                 <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-blue-500 rounded-2xl p-6 text-center transition cursor-pointer relative">
                   <input type="file" id="pdf-merge-input" multiple accept="application/pdf" onchange="handleMergeFilesSelect(event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
                   <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400 mb-2"></i>
-                  <p class="text-xs font-bold">Pilih beberapa file PDF untuk digabungkan</p>
+                  <p class="text-xs font-bold">Pilih several file PDF untuk digabungkan</p>
                   <p class="text-[10px] text-slate-400 mt-1">Dukung Drag & Drop berkas</p>
                 </div>
                 <div id="pdf-merge-list" class="space-y-2 max-h-40 overflow-y-auto custom-scroll"></div>
@@ -939,7 +940,7 @@
               <h5 class="text-[11px] font-black text-blue-700 dark:text-blue-400 flex items-center gap-1.5">
                 <i class="fa-solid fa-circle-nodes text-blue-500"></i> Progressive Web App
               </h5>
-              <p class="text-[9px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p class="text-[9px] text-slate-505 dark:text-slate-400 leading-relaxed">
                 Unduh paket berikut untuk meletakkan file pendukung luring.
               </p>
               <div class="grid grid-cols-2 gap-2">
@@ -1162,6 +1163,21 @@
 
     <!-- ARCHITECTURAL PROTECTIVE SAFE GUARD CODES -->
     <script>
+      // Definisikan CONFIG global jika js/app.js tidak termuat atau untuk pencegahan aman
+      window.CONFIG = window.CONFIG || {
+        SCHOOL_NAME_LONG: "UPT SPF SMP Negeri 3 Makassar",
+        SCHOOL_NAME_SHORT: "SMP Negeri 3 Makassar",
+        SCHOOL_CODE_ABBR: "SPENTIG", 
+        NPSN: "40312436",
+        OPERATOR_NAME: "Rahmat Rahim",
+        CUTOFF_DATE: "August 31, 2026 23:59:59",
+        CUTOFF_TITLE: "Batas Akhir Pemutakhiran Dapodik 2026",
+        CUTOFF_DESC: "Batas waktu sinkronisasi data profil sekolah dan peserta didik untuk perhitungan dana BOS.",
+        CUTOFF_FOOTER_TEXT: "Target Batas: 31 Agustus 2026",
+        STORAGE_PREFIX: "dapohub-",
+        IDLE_LIMIT_MINUTES: 15
+      };
+
       // 1. Tema Kontrol (Safe Fallback Engine)
       window.toggleTheme = window.toggleTheme || function() {
         const html = document.documentElement;
@@ -1246,7 +1262,45 @@
         }
       };
 
-      // Inisialisasi Tema Default Pada Load Pertama Kali
+      // 7. Hitung Mundur Cut-off Dapodik (Safe Fallback Engine)
+      window.startCutOffCountdown = window.startCutOffCountdown || function() {
+        if (!window.CONFIG || !window.CONFIG.CUTOFF_DATE) return;
+        const targetDate = new Date(window.CONFIG.CUTOFF_DATE).getTime();
+        const daysEl = document.getElementById("countdown-days");
+        const hoursEl = document.getElementById("countdown-hours");
+        const minutesEl = document.getElementById("countdown-minutes");
+        const secondsEl = document.getElementById("countdown-seconds");
+        
+        if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return;
+
+        function updateCountdown() {
+          const now = Date.now();
+          const distance = targetDate - now;
+
+          if (distance < 0) {
+            daysEl.textContent = "00";
+            hoursEl.textContent = "00";
+            minutesEl.textContent = "00";
+            secondsEl.textContent = "00";
+            return;
+          }
+          
+          const d = Math.floor(distance / 86400000);
+          const h = Math.floor((distance % 86400000) / 3600000);
+          const m = Math.floor((distance % 3600000) / 60000);
+          const s = Math.floor((distance % 60000) / 1000);
+          
+          daysEl.textContent = d < 10 ? '0' + d : d;
+          hoursEl.textContent = h < 10 ? '0' + h : h;
+          minutesEl.textContent = m < 10 ? '0' + m : m;
+          secondsEl.textContent = s < 10 ? '0' + s : s;
+        }
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+      };
+
+      // Inisialisasi Tema & Sinkronisasi Countdown Default Pada Load Pertama Kali
       (function initTheme() {
         const savedTheme = localStorage.getItem('dapohub-theme');
         if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -1254,8 +1308,9 @@
           const icon = document.getElementById('theme-icon');
           if(icon) icon.className = 'fa-solid fa-sun';
         }
+        
         const schoolHeader = document.getElementById('view-school-header');
-        if (schoolHeader && schoolHeader.textContent === "Memuat nama sekolah...") {
+        if (schoolHeader && (schoolHeader.textContent === "Memuat nama sekolah..." || schoolHeader.textContent === "")) {
           schoolHeader.textContent = "UPT SPF SMP Negeri 3 Makassar";
         }
         
@@ -1271,6 +1326,25 @@
         const operatorName = document.getElementById('view-operator-name');
         if (operatorName && operatorName.textContent === "Memuat...") {
           operatorName.textContent = "Rahmat Rahim";
+        }
+
+        // SINKRONISASI TITLES COUNDOWN: Mengisi DOM info jika js/app.js gagal memuat atau belum sinkron
+        const cutoffTitle = document.getElementById('view-cutoff-title');
+        if (cutoffTitle && (cutoffTitle.textContent.includes("Memuat") || cutoffTitle.textContent === "")) {
+          cutoffTitle.innerHTML = `<i class="fa-solid fa-clock-rotate-left animate-pulse"></i> ${window.CONFIG.CUTOFF_TITLE}`;
+        }
+        const cutoffDesc = document.getElementById('view-cutoff-desc');
+        if (cutoffDesc && (cutoffDesc.textContent.includes("Memuat") || cutoffDesc.textContent === "")) {
+          cutoffDesc.textContent = window.CONFIG.CUTOFF_DESC;
+        }
+        const cutoffFooter = document.getElementById('view-cutoff-footer-target');
+        if (cutoffFooter && (cutoffFooter.textContent.includes("Target") || cutoffFooter.textContent === "")) {
+          cutoffFooter.textContent = window.CONFIG.CUTOFF_FOOTER_TEXT;
+        }
+
+        // Pemicu eksekusi fungsi hitung mundur
+        if (typeof window.startCutOffCountdown === 'function') {
+          window.startCutOffCountdown();
         }
       })();
     </script>
