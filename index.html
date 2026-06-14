@@ -18,7 +18,7 @@
     
     <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link class="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     
@@ -79,7 +79,7 @@
       })();
     </script>
   </head>
-  <body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300 relative">
+  <body class="bg-slate-50 text-slate-800 dark:bg-slate-900/40 dark:text-slate-100 min-h-screen transition-colors duration-300 relative">
     
     <!-- HEADER BAR -->
     <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/60 dark:border-slate-800">
@@ -96,7 +96,7 @@
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500 dark:bg-blue-400"></span>
                 </span>
-                Pro v 5.0
+                Pro v5.0
               </span>
             </h1>
             <p id="view-school-header" class="text-[9px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">Memuat nama sekolah...</p>
@@ -107,7 +107,7 @@
           <div class="hidden sm:flex flex-col items-end font-mono text-[10px] md:text-xs text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-800 pr-3 md:pr-4">
             <span id="header-date" class="font-medium text-slate-400">Memuat tanggal...</span>
             <span id="header-time" class="font-bold text-slate-700 dark:text-slate-200">WITA</span>
-            <!-- Skrip Inline Jam Pemuatan Awal -->
+            <!-- Skrip Jam Pemuatan Awal -->
             <script>
               (function() {
                 const dateEl = document.getElementById('header-date');
@@ -142,28 +142,100 @@
         <div class="bg-white dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 rounded-3xl p-4 sm:p-6 md:p-8 shadow-xl shadow-slate-200/40 dark:shadow-none backdrop-blur-sm relative overflow-hidden">
           <div class="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
             <div class="flex flex-col sm:flex-row items-center text-center sm:text-left gap-4 sm:gap-5 w-full lg:w-auto">
-              <!-- BAGIAN AVATAR: Menggunakan ikon jaringan bergerak kustom yang premium -->
+              <!-- BAGIAN AVATAR: Menggunakan ikon jaringan bergerak kustom bermotif isometrik SDN (Software Defined Network) -->
               <div class="relative flex-shrink-0">
-                <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-sky-400 via-blue-600 to-indigo-600 p-1 shadow-xl overflow-hidden relative">
+                <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-sky-400 via-blue-600 to-indigo-600 p-1 shadow-xl overflow-hidden relative select-none">
                   <div id="profile-avatar-img" class="w-full h-full bg-slate-950 flex items-center justify-center rounded-[12px] overflow-hidden">
-                    <svg class="w-12 h-12 text-sky-400" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <!-- Lingkaran orbit berputar -->
-                      <circle cx="50" cy="50" r="30" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 6" class="animate-spin origin-center" style="animation-duration: 12s;"></circle>
-                      
-                      <!-- Jalur transmisi data -->
-                      <line x1="50" y1="20" x2="20" y2="70" stroke="currentColor" stroke-width="2" class="opacity-60"></line>
-                      <line x1="50" y1="20" x2="80" y2="70" stroke="currentColor" stroke-width="2" class="opacity-60"></line>
-                      <line x1="20" y1="70" x2="80" y2="70" stroke="currentColor" stroke-width="2" class="opacity-60"></line>
-                      <line x1="50" y1="20" x2="50" y2="50" stroke="currentColor" stroke-width="1.5" class="opacity-40"></line>
-                      <line x1="20" y1="70" x2="50" y2="50" stroke="currentColor" stroke-width="1.5" class="opacity-40"></line>
-                      <line x1="80" y1="70" x2="50" y2="50" stroke="currentColor" stroke-width="1.5" class="opacity-40"></line>
-                      
-                      <!-- Titik-titik node jaringan dengan animasi denyut -->
-                      <circle cx="50" cy="20" r="5" fill="#38bdf8" class="animate-pulse"></circle>
-                      <circle cx="20" cy="70" r="5" fill="#38bdf8" class="animate-pulse" style="animation-delay: 0.3s;"></circle>
-                      <circle cx="80" cy="70" r="5" fill="#38bdf8" class="animate-pulse" style="animation-delay: 0.6s;"></circle>
-                      <circle cx="50" cy="50" r="7" fill="#818cf8" class="animate-pulse" style="animation-duration: 2s;"></circle>
-                      <circle cx="50" cy="50" r="4" fill="#4f46e5"></circle>
+                    <svg class="w-full h-full text-sky-400" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <style>
+                        @keyframes sdn-pulse {
+                          0%, 100% { transform: scale(1); opacity: 0.8; }
+                          50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6)); }
+                        }
+                        @keyframes sdn-dash {
+                          to { stroke-dashoffset: -20; }
+                        }
+                        @keyframes sdn-float {
+                          0%, 100% { transform: translateY(0px); }
+                          50% { transform: translateY(-3px); }
+                        }
+                        .sdn-core { animation: sdn-pulse 3s infinite ease-in-out; transform-origin: 50px 48px; }
+                        .sdn-line { stroke-dasharray: 5 3; animation: sdn-dash 1s infinite linear; }
+                        .sdn-node { animation: sdn-float 4s infinite ease-in-out; }
+                      </style>
+
+                      <!-- Jalur Koneksi / Link Transmisi (SDN Plane) -->
+                      <path d="M50 48 L22 30" stroke="#0ea5e9" stroke-width="1.5" class="sdn-line" />
+                      <path d="M50 48 L78 30" stroke="#0ea5e9" stroke-width="1.5" class="sdn-line" />
+                      <path d="M50 48 L50 78" stroke="#6366f1" stroke-width="1.5" class="sdn-line" />
+                      <path d="M50 48 L18 64" stroke="#818cf8" stroke-width="1.2" class="sdn-line" style="animation-direction: reverse;" />
+                      <path d="M50 48 L82 64" stroke="#818cf8" stroke-width="1.2" class="sdn-line" style="animation-direction: reverse;" />
+
+                      <!-- Node Kiri Atas (Komputer / Laptop) -->
+                      <g class="sdn-node" style="animation-delay: 0.2s;">
+                        <!-- Isometric Base -->
+                        <polygon points="17,30 27,25 32,30 22,35" fill="#1e293b" stroke="#38bdf8" stroke-width="1" />
+                        <!-- Screen -->
+                        <polygon points="22,35 22,23 27,21 27,33" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+                        <circle cx="22" cy="29" r="1.5" fill="#f59e0b" class="animate-pulse" />
+                      </g>
+
+                      <!-- Node Kanan Atas (Komputer / Server) -->
+                      <g class="sdn-node" style="animation-delay: 0.8s;">
+                        <polygon points="78,35 88,30 83,25 73,30" fill="#1e293b" stroke="#38bdf8" stroke-width="1" />
+                        <polygon points="78,35 78,23 73,21 73,33" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+                        <circle cx="78" cy="29" r="1.5" fill="#10b981" class="animate-pulse" />
+                      </g>
+
+                      <!-- Node Kiri Bawah (Komputer / Tablet) -->
+                      <g class="sdn-node" style="animation-delay: 1.4s;">
+                        <polygon points="13,64 23,59 28,64 18,69" fill="#1e293b" stroke="#38bdf8" stroke-width="1" />
+                        <polygon points="18,69 18,59 13,57 13,67" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+                      </g>
+
+                      <!-- Node Kanan Bawah (Komputer / Mobile) -->
+                      <g class="sdn-node" style="animation-delay: 2s;">
+                        <polygon points="82,69 92,64 87,59 77,64" fill="#1e293b" stroke="#38bdf8" stroke-width="1" />
+                        <polygon points="82,69 82,59 77,57 77,67" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+                      </g>
+
+                      <!-- Central Hub / SDN Controller (Isometric Stacked Cubic Stack) -->
+                      <g class="sdn-core">
+                        <!-- Top Cube -->
+                        <g>
+                          <polygon points="50,28 62,34 50,40 38,34" fill="#0ea5e9" opacity="0.9" />
+                          <polygon points="38,34 50,40 50,48 38,42" fill="#0284c7" />
+                          <polygon points="50,40 62,34 62,42 50,48" fill="#0369a1" />
+                        </g>
+                        <!-- Mid-Left Amber Cube -->
+                        <g transform="translate(-12, 10)">
+                          <polygon points="50,28 62,34 50,40 38,34" fill="#f59e0b" opacity="0.9" />
+                          <polygon points="38,34 50,40 50,48 38,42" fill="#d97706" />
+                          <polygon points="50,40 62,34 62,42 50,48" fill="#b45309" />
+                        </g>
+                        <!-- Mid-Right Amber Cube -->
+                        <g transform="translate(12, 10)">
+                          <polygon points="50,28 62,34 50,40 38,34" fill="#f59e0b" opacity="0.9" />
+                          <polygon points="38,34 50,40 50,48 38,42" fill="#d97706" />
+                          <polygon points="50,40 62,34 62,42 50,48" fill="#b45309" />
+                        </g>
+                        <!-- Bottom Center Cube -->
+                        <g transform="translate(0, 20)">
+                          <polygon points="50,28 62,34 50,40 38,34" fill="#4f46e5" opacity="0.9" />
+                          <polygon points="38,34 50,40 50,48 38,42" fill="#4338ca" />
+                          <polygon points="50,40 62,34 62,42 50,48" fill="#3730a3" />
+                        </g>
+                      </g>
+
+                      <!-- Node Central Database (Bottom) -->
+                      <g class="sdn-node" style="animation-delay: 2.5s;">
+                        <polygon points="50,78 60,73 50,68 40,73" fill="#111827" stroke="#6366f1" stroke-width="1.2" />
+                        <polygon points="40,73 50,78 50,83 40,78" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.2" />
+                        <polygon points="50,78 60,73 60,78 50,83" fill="#312e81" stroke="#6366f1" stroke-width="1.2" />
+                        <!-- Database LED indicators -->
+                        <circle cx="45" cy="76" r="1" fill="#10b981" class="animate-pulse" />
+                        <circle cx="55" cy="73.5" r="1" fill="#10b981" class="animate-pulse" style="animation-delay: 0.5s;" />
+                      </g>
                     </svg>
                   </div>
                 </div>
@@ -333,7 +405,7 @@
             <div class="relative w-full">
               <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400"><i class="fa-solid fa-magnifying-glass"></i></span>
               <input type="text" id="search-input" oninput="filterLinksOrKeys()" placeholder="Cari nama tautan, kementerian atau kredensial kunci 2FA..." class="block w-full pl-11 pr-12 py-3 text-xs sm:text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white" />
-              <button id="clear-search" onclick="clearSearchInput()" class="hidden absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 transition">
+              <button id="clear-search" onclick="clearSearchInput()" class="hidden absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-650 transition">
                 <i class="fa-solid fa-circle-xmark text-lg"></i>
               </button>
             </div>
@@ -491,7 +563,7 @@
               <!-- Catatan Kaki Keamanan -->
               <footer class="pt-3 border-t border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 font-medium gap-2">
                 <span class="flex items-center gap-1"><i class="fa-solid fa-shield-halved text-emerald-500"></i> Seluruh pemrosesan utilitas IT berjalan 100% lokal di dalam peramban Anda.</span>
-                <span class="font-mono text-[9px]">DAPO-HUB IT Suite v 5.0</span>
+                <span class="font-mono text-[9px]">DAPO-HUB IT Suite v5.0</span>
               </footer>
             </div>
           </article>
@@ -576,6 +648,200 @@
             </div>
           </article>
 
+          <!-- WORKSPACE: RUANG KERJA PDF -->
+          <article id="panel-pdf-tools-wrapper" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-md space-y-6">
+              <header class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-700">
+                <h3 class="font-space font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                  <i class="fa-solid fa-file-pdf text-rose-500"></i> Ruang Kerja Pemrosesan PDF Offline
+                </h3>
+                <span class="text-[9px] font-black tracking-widest bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 px-2 py-0.5 rounded uppercase font-mono">100% lokal</span>
+              </header>
+
+              <!-- Navigasi Tab Kerja PDF -->
+              <nav class="flex overflow-x-auto no-scrollbar gap-1.5 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl" aria-label="Menu PDF">
+                <button onclick="switchPdfSubTab('merge')" id="btn-pdf-merge" class="flex-shrink-0 flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition bg-white dark:bg-slate-800 text-blue-600 shadow-xs"><i class="fa-solid fa-compress mr-1"></i> Gabung PDF</button>
+                <button onclick="switchPdfSubTab('split')" id="btn-pdf-split" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800"><i class="fa-solid fa-scissors mr-1"></i> Pisah Halaman</button>
+                <button onclick="switchPdfSubTab('compress')" id="btn-pdf-compress" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800"><i class="fa-solid fa-minimize mr-1"></i> Kompres</button>
+                <button onclick="switchPdfSubTab('img2pdf')" id="btn-pdf-img2pdf" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800"><i class="fa-solid fa-image mr-1"></i> Gambar ke PDF</button>
+                <button onclick="switchPdfSubTab('text2pdf')" id="btn-pdf-text2pdf" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800"><i class="fa-solid fa-file-lines mr-1"></i> Teks ke PDF</button>
+                <button onclick="switchPdfSubTab('pdf2word')" id="btn-pdf-pdf2word" class="flex-shrink-0 flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition text-slate-500 hover:text-slate-800"><i class="fa-solid fa-file-word mr-1"></i> Ekstrak Word</button>
+              </nav>
+
+              <!-- SUB 1: GABUNG PDF -->
+              <div id="sub-pdf-merge" class="space-y-4">
+                <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-blue-500 rounded-2xl p-6 text-center transition cursor-pointer relative">
+                  <input type="file" id="pdf-merge-input" multiple accept="application/pdf" onchange="handleMergeFilesSelect(event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+                  <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400 mb-2"></i>
+                  <p class="text-xs font-bold">Pilih beberapa file PDF untuk digabungkan</p>
+                  <p class="text-[10px] text-slate-400 mt-1">Dukung Drag & Drop berkas</p>
+                </div>
+                <div id="pdf-merge-list" class="space-y-2 max-h-40 overflow-y-auto custom-scroll"></div>
+                <button onclick="processPdfMerge()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition shadow flex items-center justify-center gap-1.5"><i class="fa-solid fa-object-group"></i> Gabungkan Berkas PDF</button>
+              </div>
+
+              <!-- SUB 2: PISAH PDF -->
+              <div id="sub-pdf-split" class="hidden space-y-4">
+                <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-6 text-center relative">
+                  <input type="file" id="pdf-split-input" accept="application/pdf" onchange="handleSplitFileSelect(event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+                  <p id="pdf-split-filename" class="text-xs font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-file-pdf text-rose-500 mr-1.5"></i>Unggah satu file PDF yang ingin dipisahkan</p>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Halaman yang Diekstrak (Contoh: 1,3,5-8)</label>
+                    <input type="text" id="pdf-split-pages" placeholder="Contoh: 1,3-5" class="w-full p-2.5 rounded-xl border dark:bg-slate-900 dark:border-slate-700 outline-none" />
+                  </div>
+                  <div>
+                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Nama Hasil Berkas Keluar</label>
+                    <input type="text" id="pdf-split-name" placeholder="ekstrak_halaman.pdf" class="w-full p-2.5 rounded-xl border dark:bg-slate-900 dark:border-slate-700 outline-none" />
+                  </div>
+                </div>
+                <button onclick="processPdfSplit()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-scissors"></i> Ekstrak Halaman Terpilih</button>
+              </div>
+
+              <!-- SUB 3: KOMPRES PDF -->
+              <div id="sub-pdf-compress" class="hidden space-y-4">
+                <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-6 text-center relative">
+                  <input type="file" accept="application/pdf" onchange="handleCompressFileSelect(event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+                  <p id="pdf-compress-filename" class="text-xs font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-file-zipper text-emerald-500 mr-1.5"></i>Tarik & Lepas File PDF disini</p>
+                </div>
+                <div id="pdf-compress-info" class="hidden p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border flex justify-between text-xs font-mono">
+                  <span id="compress-file-name" class="truncate max-w-[70%] font-bold">dokumen.pdf</span>
+                  <span id="compress-file-size" class="text-emerald-500 font-bold">0.0 KB</span>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-black uppercase text-slate-400 mb-2">Tingkat Kompresi Dokumen</label>
+                  <div class="grid grid-cols-3 gap-2">
+                    <button id="btn-compress-low" onclick="setCompressionLevel('low')" class="py-2 px-3 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">Kualitas Tinggi</button>
+                    <button id="btn-compress-medium" onclick="setCompressionLevel('medium')" class="py-2 px-3 rounded-xl text-xs font-bold border border-blue-500 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 shadow-xs">Sedang</button>
+                    <button id="btn-compress-high" onclick="setCompressionLevel('high')" class="py-2 px-3 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700">Ukuran Terkecil</button>
+                  </div>
+                </div>
+                <button onclick="processPdfCompression()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-bolt"></i> Mulai Kompresi Lokal</button>
+              </div>
+
+              <!-- SUB 4: GAMBAR KE PDF -->
+              <div id="sub-pdf-img2pdf" class="hidden space-y-4">
+                <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-6 text-center relative">
+                  <input type="file" multiple accept="image/jpeg, image/png" onchange="handleImageSelect(event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+                  <p class="text-xs font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-images text-emerald-500 mr-1.5"></i>Pilih berkas foto JPG / PNG</p>
+                </div>
+                <div id="pdf-img-preview" class="grid grid-cols-4 gap-2"></div>
+                <button onclick="processImageToPdf()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-wand-magic-sparkles"></i> Render Gambar ke Dokumen PDF</button>
+              </div>
+
+              <!-- SUB 5: TEKS KE PDF -->
+              <div id="sub-pdf-text2pdf" class="hidden space-y-4">
+                <div>
+                  <label class="block text-[10px] font-black uppercase text-slate-400 mb-1.5">Naskah Dokumen Teks</label>
+                  <textarea id="pdf-text-input-body" rows="4" placeholder="Ketik atau tempel tulisan Anda disini..." class="w-full text-xs p-3 rounded-xl border dark:bg-slate-900 outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+                </div>
+                <div>
+                  <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Nama Dokumen Hasil</label>
+                  <input type="text" id="pdf-text-filename" placeholder="dokumen_naskah.pdf" class="w-full text-xs p-2.5 rounded-xl border dark:bg-slate-900 outline-none" />
+                </div>
+                <button onclick="processTextToPdf()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-file-export"></i> Compile Teks ke PDF</button>
+              </div>
+
+              <!-- SUB 6: PDF KE WORD -->
+              <div id="sub-pdf-pdf2word" class="hidden space-y-4">
+                <div class="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-6 text-center relative">
+                  <input type="file" id="pdf-to-word-input" accept="application/pdf" onchange="handlePdfToWordSelect(event)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+                  <p id="pdf-to-word-filename" class="text-xs font-bold text-slate-600 dark:text-slate-300"><i class="fa-solid fa-file-pdf text-rose-500 mr-1.5"></i>Pilih Berkas PDF yang ingin diekstrak ke Word (.doc)</p>
+                </div>
+                <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border text-xs font-serif leading-relaxed max-h-24 overflow-y-auto" id="pdf-word-preview-text">Belum ada file yang dipilih...</div>
+                <button onclick="processPdfToWord()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-xl transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-file-word"></i> Ekstrak & Konversi ke Word</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- WORKSPACE: MONITOR / LATENSI PING SERVER -->
+          <article id="panel-ping-tools-wrapper" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-md space-y-6">
+              <header class="flex flex-col md:flex-row justify-between items-start md:items-center pb-3 border-b border-slate-100 dark:border-slate-700 gap-3">
+                <div>
+                  <h3 class="font-space font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                    <i class="fa-solid fa-network-wired text-sky-500 animate-pulse"></i> Status & Keandalan Latensi Server Kemendikbud
+                  </h3>
+                  <p class="text-[10px] text-slate-400 mt-1">Mengukur stabilitas rute upstream jaringan Anda ke server kementerian.</p>
+                </div>
+                <div class="flex gap-2 w-full md:w-auto">
+                  <button id="btn-toggle-autoping" onclick="toggleAutoPing()" class="flex-1 md:flex-none px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md">
+                    <i id="icon-autoping" class="fa-solid fa-stop"></i> <span id="text-autoping">Hentikan Auto</span>
+                  </button>
+                  <button onclick="pingAllEndpoints()" class="px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-rotate"></i> Ping Manual
+                  </button>
+                </div>
+              </header>
+
+              <div id="ping-grid-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+            </div>
+          </article>
+
+          <!-- WORKSPACE: UJI KECEPATAN INTERNET SPEEDTEST -->
+          <article id="panel-speedtest-wrapper" class="hidden space-y-6">
+            <div class="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-3xl border border-slate-200/60 dark:border-slate-700/60 shadow-md space-y-6">
+              <header class="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-700">
+                <h3 class="font-space font-extrabold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                  <i class="fa-solid fa-gauge-high text-amber-500"></i> Speedtest Jaringan Lokal Lab Komputer
+                </h3>
+                <span class="text-[9px] font-black tracking-widest bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded uppercase font-mono">cors guaranteed</span>
+              </header>
+
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                <!-- SPEEDOMETER RING CONTAINER -->
+                <div class="md:col-span-5 flex flex-col items-center justify-center py-4 relative">
+                  <svg class="w-48 h-48 transform -rotate-90">
+                    <circle cx="96" cy="96" r="80" class="stroke-slate-100 dark:stroke-slate-900 fill-none" stroke-width="12" />
+                    <!-- strokeDasharray: 495, strokeDashoffset minimal 165 (maks 100mbps), maksimal 495 (0mbps) -->
+                    <circle id="speed-progress-ring" cx="96" cy="96" r="80" class="stroke-blue-600 fill-none transition-all duration-500" stroke-width="12" stroke-linecap="round" stroke-dasharray="495" stroke-dashoffset="495" />
+                  </svg>
+                  <div class="absolute flex flex-col items-center justify-center text-center">
+                    <span id="speedtest-current-val" class="text-4xl font-black font-space tracking-tighter text-slate-900 dark:text-white">0.0</span>
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-slate-400 font-mono mt-0.5">Mbps</span>
+                    <span id="speedtest-current-status" class="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-900 text-slate-500 mt-2">Siap Diuji</span>
+                  </div>
+                </div>
+
+                <!-- STATS & KELAYAKAN GRID -->
+                <div class="md:col-span-7 space-y-4">
+                  <div class="grid grid-cols-3 gap-2.5 text-center font-mono">
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 rounded-xl">
+                      <span class="block text-[8px] font-black text-slate-400">PING / LATENCY</span>
+                      <span id="speedtest-ping" class="text-base font-black text-slate-800 dark:text-white">-</span>
+                      <span id="speedtest-jitter" class="block text-[7px] font-bold text-slate-400 font-mono">Jitter: -</span>
+                    </div>
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 rounded-xl">
+                      <span class="block text-[8px] font-black text-slate-400 text-blue-600 dark:text-blue-400">UNDUH (DOWNLOAD)</span>
+                      <span id="speedtest-download" class="text-base font-black text-blue-600 dark:text-blue-400">-</span>
+                      <span class="text-[7px] text-slate-400 block font-bold font-mono">Mbps</span>
+                    </div>
+                    <div class="p-3 bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 rounded-xl">
+                      <span class="block text-[8px] font-black text-slate-400 text-indigo-500">UNGGAH (UPLOAD)</span>
+                      <span id="speedtest-upload" class="text-base font-black text-indigo-500">-</span>
+                      <span class="text-[7px] text-slate-400 block font-bold font-mono">Mbps</span>
+                    </div>
+                  </div>
+
+                  <div id="speedtest-integrity-box" class="p-4 bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-slate-150 dark:border-slate-700/50 flex items-start gap-4 shadow-sm">
+                    <div id="speedtest-integrity-icon" class="p-3 bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400 rounded-xl text-xl flex-shrink-0">
+                      <i class="fa-solid fa-circle-question"></i>
+                    </div>
+                    <div>
+                      <h4 id="speedtest-integrity-title" class="text-xs font-extrabold text-slate-900 dark:text-white">Analisis Kelayakan Jaringan</h4>
+                      <p id="speedtest-integrity-desc" class="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed mt-1">Mulai uji kecepatan jaringan untuk mendeteksi kelayakan sinkronisasi Dapodik and server ANBK sekolah.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button id="btn-start-speedtest" onclick="startInternetSpeedtest()" class="w-full py-3.5 bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white text-xs font-black rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+                <i class="fa-solid fa-play"></i> Mulai Uji Kecepatan Jaringan (Speedtest)
+              </button>
+            </div>
+          </article>
+
           <!-- RENDER LINK CARD -->
           <article id="panel-links-main-wrapper" class="space-y-6">
             <div id="dynamic-links-wrapper" class="space-y-6 sm:space-y-8"></div>
@@ -598,7 +864,6 @@
               <button id="btn-tab-calendar" onclick="switchCalendarMemoTab('calendar')" class="flex-1 py-2 px-1 rounded-xl text-[11px] font-extrabold transition-all flex items-center justify-center gap-1 bg-white dark:bg-slate-800 text-blue-600 shadow-sm">
                 <i class="fa-solid fa-calendar-days"></i> Kalender
               </button>
-              <!-- Diperbaiki: Menggunakan kata baku "Catatan" menggantikan "Buku Saku" -->
               <button id="btn-tab-memo" onclick="switchCalendarMemoTab('memo')" class="flex-1 py-2 px-1 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
                 <i class="fa-solid fa-sticky-note"></i> Catatan
               </button>
@@ -608,7 +873,7 @@
               <!-- Panel Tab Kalender -->
               <div id="panel-tab-calendar" class="space-y-4">
                 <header class="flex items-center justify-between">
-                  <span class="text-[9px] font-black tracking-widest bg-blue-50 dark:bg-slate-900 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-full uppercase">PENANDA HARI KERJA</span>
+                  <span class="text-[9px] font-black tracking-widest bg-blue-50 dark:bg-slate-900 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-full uppercase font-sans">PENANDA HARI KERJA</span>
                   <div class="flex items-center space-x-1">
                     <button onclick="prevMonth()" class="w-6 h-6 flex items-center justify-center rounded bg-slate-100 dark:bg-slate-900 text-[10px] hover:bg-slate-200 dark:hover:bg-slate-700 transition"><i class="fa-solid fa-chevron-left"></i></button>
                     <button onclick="nextMonth()" class="w-6 h-6 flex items-center justify-center rounded bg-slate-100 dark:bg-slate-900 text-[10px] hover:bg-slate-200 dark:hover:bg-slate-700 transition"><i class="fa-solid fa-chevron-right"></i></button>
@@ -620,8 +885,7 @@
                 </div>
                 <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold" id="calendar-days-grid"></div>
                 <footer id="calendar-event-display" class="pt-3 border-t border-slate-100 dark:border-slate-700">
-                   <!-- Penyelarasan Istilah Catatan -->
-                   <p class="text-[10px] text-slate-400 italic"><i class="fa-solid fa-info-circle text-blue-400"></i> Klik pada tanggal untuk melihat catatan penting terkait.</p>
+                   <p class="text-[10px] text-slate-400 italic"><i class="fa-solid fa-info-circle text-blue-400"></i> Klik pada tanggal untuk melihat detail Catatan penting terkait.</p>
                 </footer>
               </div>
 
@@ -718,7 +982,7 @@
 
     <!-- 3. Modal Kelola Template WhatsApp -->
     <div id="templates-modal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
-      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 max-w-lg w-full mx-4 shadow-2xl transform scale-95 transition-all duration-300">
+      <div class="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700 rounded-3xl p-6 max-w-lg w-full mx-4 shadow-2xl transform scale-95 transition-all duration-300">
         <!-- Tampilan Daftar Template -->
         <div id="templates-list-view" class="space-y-4">
           <header class="flex justify-between items-center pb-2 border-b dark:border-slate-700">
