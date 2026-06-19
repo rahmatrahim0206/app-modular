@@ -147,45 +147,47 @@ window.selectCategory = function(cat) {
   const pWa = document.getElementById('panel-whatsapp-wrapper');
   const pIt = document.getElementById('panel-it-tools-wrapper');
   
-  if (p2Fa && pLinks && pPdf && pPing && pSpeed && pWa && pIt) {
-    p2Fa.classList.add('hidden');
-    pLinks.classList.add('hidden');
-    pPdf.classList.add('hidden');
-    pPing.classList.add('hidden');
-    pSpeed.classList.add('hidden');
-    pWa.classList.add('hidden');
-    pIt.classList.add('hidden');
+  // FIX BUG: Sembunyikan semua panel secara defensif dan aman (mencegah error jika salah satu elemen bernilai null/missing)
+  if (p2Fa) p2Fa.classList.add('hidden');
+  if (pLinks) pLinks.classList.add('hidden');
+  if (pPdf) pPdf.classList.add('hidden');
+  if (pPing) pPing.classList.add('hidden');
+  if (pSpeed) pSpeed.classList.add('hidden');
+  if (pWa) pWa.classList.add('hidden');
+  if (pIt) pIt.classList.add('hidden');
 
-    // --- SINKRONISASI CLEANUP OTOMATIS LAYANAN YANG TERBUKA DI LATAR BELAKANG ---
-    if (cat !== 'ping_tools' && typeof stopAutoPingInterval === 'function') {
-      stopAutoPingInterval();
-    }
-    if (cat !== 'speedtest' && typeof speedtestAbortController !== 'undefined' && speedtestAbortController) {
-      speedtestAbortController.abort();
-    }
-    if (cat !== '2fa_auth' && typeof isScanning !== 'undefined' && isScanning && typeof toggleQrScanner === 'function') {
-      toggleQrScanner();
-    }
+  // --- SINKRONISASI CLEANUP OTOMATIS LAYANAN YANG TERBUKA DI LATAR BELAKANG ---
+  if (cat !== 'ping_tools' && typeof stopAutoPingInterval === 'function') {
+    stopAutoPingInterval();
+  }
+  if (cat !== 'speedtest' && typeof speedtestAbortController !== 'undefined' && speedtestAbortController) {
+    speedtestAbortController.abort();
+  }
+  if (cat !== '2fa_auth' && typeof isScanning !== 'undefined' && isScanning && typeof toggleQrScanner === 'function') {
+    toggleQrScanner();
+  }
 
-    if (cat === '2fa_auth') {
-      p2Fa.classList.remove('hidden');
-      if (typeof renderAuthenticatorKeys === 'function') renderAuthenticatorKeys();
-    } else if (cat === 'pdf_tools') {
-      pPdf.classList.remove('hidden');
-      if (typeof resetPdfWorkspaces === 'function') resetPdfWorkspaces();
-    } else if (cat === 'ping_tools') {
-      pPing.classList.remove('hidden');
-      if (typeof initPingWorkspace === 'function') initPingWorkspace();
-    } else if (cat === 'speedtest') {
-      pSpeed.classList.remove('hidden');
-      if (typeof initSpeedtestWorkspace === 'function') initSpeedtestWorkspace();
-    } else if (cat === 'whatsapp') {
-      pWa.classList.remove('hidden');
-      if (typeof populateWaSelect === 'function') populateWaSelect();
-    } else if (cat === 'it_tools') {
-      pIt.classList.remove('hidden');
-      if (typeof initItToolsWorkspace === 'function') initItToolsWorkspace();
-    } else {
+  // Tampilkan panel aktif secara individual dengan pengecekan aman
+  if (cat === '2fa_auth') {
+    if (p2Fa) p2Fa.classList.remove('hidden');
+    if (typeof renderAuthenticatorKeys === 'function') renderAuthenticatorKeys();
+  } else if (cat === 'pdf_tools') {
+    if (pPdf) pPdf.classList.remove('hidden');
+    if (typeof resetPdfWorkspaces === 'function') resetPdfWorkspaces();
+  } else if (cat === 'ping_tools') {
+    if (pPing) pPing.classList.remove('hidden');
+    if (typeof initPingWorkspace === 'function') initPingWorkspace();
+  } else if (cat === 'speedtest') {
+    if (pSpeed) pSpeed.classList.remove('hidden');
+    if (typeof initSpeedtestWorkspace === 'function') initSpeedtestWorkspace();
+  } else if (cat === 'whatsapp') {
+    if (pWa) pWa.classList.remove('hidden');
+    if (typeof populateWaSelect === 'function') populateWaSelect();
+  } else if (cat === 'it_tools') {
+    if (pIt) pIt.classList.remove('hidden');
+    if (typeof initItToolsWorkspace === 'function') initItToolsWorkspace();
+  } else {
+    if (pLinks) {
       pLinks.className = "space-y-6";
       pLinks.classList.remove('hidden');
     }
@@ -428,7 +430,7 @@ window.showDateMemos = function(day, month, year) {
       listHtml += `
         <div class="p-2 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 rounded-xl animate-fade-in">
           <h5 class="text-[10px] font-black text-amber-800 dark:text-amber-400">${n.title}</h5>
-          <p class="text-[9px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">${n.body}</p>
+          <p class="text-[9px] text-slate-505 dark:text-slate-400 mt-0.5 leading-relaxed">${n.body}</p>
         </div>
       `;
     });
@@ -458,7 +460,7 @@ window.renderQuickNotes = function() {
     h5.innerHTML = `<span>${n.title}</span> <span class="text-[8px] bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-slate-500">${dateFormatted}</span>`;
     
     const p = document.createElement('p');
-    p.className = 'text-[9px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3 mt-1';
+    p.className = 'text-[9px] text-slate-505 dark:text-slate-400 leading-relaxed line-clamp-3 mt-1';
     p.textContent = n.body;
     
     const btn = document.createElement('button');
@@ -553,87 +555,6 @@ window.closeTemplatesModal = function() {
     m.classList.add('opacity-0', 'pointer-events-none');
     m.children[0].classList.replace('scale-100', 'scale-95');
   }
-}
-
-window.renderTemplatesList = function() {
-  const container = document.getElementById('templates-list-container');
-  if(!container) return;
-  
-  const buffer = [];
-  waTemplates.forEach(t => {
-    buffer.push(`
-      <div class="p-3 border dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 rounded-xl flex justify-between items-start gap-2 animate-fade-in">
-        <div class="truncate flex-1">
-          <h5 class="text-xs font-bold truncate text-slate-800 dark:text-white">${t.name}</h5>
-          <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5">${t.text}</p>
-        </div>
-        <div class="flex gap-1.5 flex-shrink-0">
-          <button onclick="editTemplate('${t.id}')" class="text-blue-500 hover:text-blue-700 transition" title="Ubah"><i class="fa-solid fa-pen-to-square"></i></button>
-          <button onclick="deleteTemplate('${t.id}')" class="text-rose-500 hover:text-rose-700 transition" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
-        </div>
-      </div>
-    `);
-  });
-  container.innerHTML = buffer.join('');
-}
-
-window.showAddTemplateForm = function() {
-  const lv = document.getElementById('templates-list-view');
-  const fv = document.getElementById('template-form-view');
-  if (lv && fv) {
-    lv.classList.add('hidden');
-    fv.classList.remove('hidden');
-  }
-  document.getElementById('template-edit-id').value = '';
-  document.getElementById('template-name-input').value = '';
-  document.getElementById('template-text-input').value = '';
-}
-
-window.hideTemplateForm = function() {
-  const lv = document.getElementById('templates-list-view');
-  const fv = document.getElementById('template-form-view');
-  if (lv && fv) {
-    lv.classList.remove('hidden');
-    fv.classList.add('hidden');
-  }
-}
-
-window.saveTemplate = function() {
-  const id = document.getElementById('template-edit-id').value;
-  const name = document.getElementById('template-name-input').value.trim();
-  const text = document.getElementById('template-text-input').value.trim();
-  if(!name || !text) return showToast("Lengkapi nama & pesan template!", "warning");
-  if(id) {
-    const idx = waTemplates.findIndex(t => t.id === id);
-    if(idx !== -1) waTemplates[idx] = { id, name, text };
-  } else {
-    waTemplates.push({ id: 'wat-'+Date.now(), name, text });
-  }
-  if (typeof secureSave === 'function') secureSave(CONFIG.STORAGE_PREFIX + 'wa-templates', waTemplates);
-  populateWaSelect();
-  renderTemplatesList();
-  hideTemplateForm();
-  showToast("Template pesan berhasil disimpan!");
-}
-
-window.editTemplate = function(id) {
-  const t = waTemplates.find(x => x.id === id);
-  if(t) {
-    showAddTemplateForm();
-    document.getElementById('template-edit-id').value = t.id;
-    document.getElementById('template-name-input').value = t.name;
-    document.getElementById('template-text-input').value = t.text;
-  }
-}
-
-window.deleteTemplate = function(id) {
-  showCustomConfirm("Hapus Template?", "Template siaran pesan ini akan dihapus secara permanen.", () => {
-    waTemplates = waTemplates.filter(x => x.id !== id);
-    if (typeof secureSave === 'function') secureSave(CONFIG.STORAGE_PREFIX + 'wa-templates', waTemplates);
-    populateWaSelect();
-    renderTemplatesList();
-    showToast("Template berhasil dihapus.");
-  }, 'fa-trash-can');
 }
 
 // --- PWA OFFLINE DEPLOYMENT KIT DOWNLOADER ---
