@@ -74,20 +74,13 @@ window.renderDynamicLinks = function() {
   const searchInput = document.getElementById('search-input');
   const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
   
-  // PEMBARUAN: Menghapus entri 'compress_foto' dari daftar perhitungan lencana
   let counts = { semua: 0, utama: 0, verval: 0, keuangan: 0, guru: 0, kepegawaian: 0, portal_tka: 0, daerah: 0, pdf_tools: 6, ping_tools: 6, speedtest: 1, "2fa_auth": 0, whatsapp: 0, it_tools: 4 };
 
   if (!linksData || !Array.isArray(linksData)) {
     linksData = typeof defaultSeedLinks !== 'undefined' ? [...defaultSeedLinks] : [];
   }
 
-  linksData.forEach(l => {
-    if (l.title.toLowerCase().includes(q) || l.desc.toLowerCase().includes(q)) {
-      counts[l.category] = (counts[l.category] || 0) + 1;
-      total++;
-    }
-  });
-  
+  // FIX BUG: Menyederhanakan loop perhitungan lencana (badge) dan mendeklarasikan variabel 'total' sebelum digunakan
   let total = 0;
   linksData.forEach(l => {
     if (l.title.toLowerCase().includes(q) || l.desc.toLowerCase().includes(q)) {
@@ -95,6 +88,7 @@ window.renderDynamicLinks = function() {
       total++;
     }
   });
+  
   counts['semua'] = total;
   counts['2fa_auth'] = typeof authenticatorKeys !== 'undefined' ? authenticatorKeys.length : 0;
   counts['whatsapp'] = typeof waTemplates !== 'undefined' ? waTemplates.length : 0;
@@ -142,7 +136,7 @@ window.renderDynamicLinks = function() {
   if (noRes) totalVis === 0 ? noRes.classList.remove('hidden') : noRes.classList.add('hidden');
 }
 
-// --- FUNGSI KLIK KATEGORI UTAMA (DIPERBAIKI UNTUK MENGHAPUS PANEL FOTO) ---
+// --- FUNGSI KLIK KATEGORI UTAMA ---
 window.selectCategory = function(cat) {
   activeCategory = cat;
   const p2Fa = document.getElementById('panel-2fa-main-auth');
@@ -434,7 +428,7 @@ window.showDateMemos = function(day, month, year) {
       listHtml += `
         <div class="p-2 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 rounded-xl animate-fade-in">
           <h5 class="text-[10px] font-black text-amber-800 dark:text-amber-400">${n.title}</h5>
-          <p class="text-[9px] text-slate-505 dark:text-slate-400 mt-0.5 leading-relaxed">${n.body}</p>
+          <p class="text-[9px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">${n.body}</p>
         </div>
       `;
     });
@@ -446,7 +440,7 @@ window.showDateMemos = function(day, month, year) {
 window.prevMonth = function() { currentDateObj.setMonth(currentDateObj.getMonth()-1); initCalendar(); }
 window.nextMonth = function() { currentDateObj.setMonth(currentDateObj.getMonth()+1); initCalendar(); }
 
-// --- TAB ASISTEN: BUKU SAKU MEMO (Diubah menjadi Catatan) ---
+// --- TAB ASISTEN: BUKU SAKU MEMO ---
 window.renderQuickNotes = function() {
   const c = document.getElementById('quick-notes-list');
   if(!c) return;
@@ -464,7 +458,7 @@ window.renderQuickNotes = function() {
     h5.innerHTML = `<span>${n.title}</span> <span class="text-[8px] bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-slate-500">${dateFormatted}</span>`;
     
     const p = document.createElement('p');
-    p.className = 'text-[9px] text-slate-505 dark:text-slate-400 leading-relaxed line-clamp-3 mt-1';
+    p.className = 'text-[9px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3 mt-1';
     p.textContent = n.body;
     
     const btn = document.createElement('button');
@@ -719,7 +713,6 @@ window.startCutOffCountdown = function() {
   setInterval(updateCountdown, 1000);
 }
 
-// PEMBARUAN: Menghapus referensi 'compressor.js' dari aset PWA untuk mencegah kegagalan pemuatan saat offline
 const manifestJsonText = `{\n  "name": "DAPO-HUB Portal",\n  "short_name": "DAPO-HUB",\n  "description": "Portal Integrasi Operator Dapodik & IT",\n  "start_url": "index.html",\n  "display": "standalone",\n  "background_color": "#f8fafc",\n  "theme_color": "#2563eb",\n  "icons": [\n    {\n      "src": "https://cdn-icons-png.flaticon.com/512/2210/2210143.png",\n      "sizes": "512x512",\n      "type": "image/png"\n    }\n  ]\n}`;
 
 const serviceWorkerJsText = `
