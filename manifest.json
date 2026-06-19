@@ -1,0 +1,16 @@
+{
+  "name": "DAPO-HUB Portal",
+  "short_name": "DAPO-HUB",
+  "description": "Portal Integrasi Operator Dapodik & IT",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2210/2210143.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
